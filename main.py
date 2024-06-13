@@ -3,6 +3,7 @@ from huggingface_hub import snapshot_download
 import threading
 import os
 import shutil
+import concurrent.futures
 import json
 
 download_hub = "HuggingFaceFW/fineweb"
@@ -24,9 +25,6 @@ def get_disk_usage():
 
 
 def download_dataset(allow_patterns):
-    while get_disk_usage() > max_disk_usage:
-        print("exceeding max disk usage")
-        threading.Event().wait(5)  # 等待5秒后重新检查磁盘使用量
     filepath = snapshot_download(
         download_hub,
         repo_type="dataset",
@@ -53,26 +51,32 @@ class DatasetHandler:
         self.current_index = 0
         self.lock = threading.Lock()
 
-    def process_and_download(self):
-        while self.current_index < len(self.patterns_list):
-            with self.lock:
-                current_pattern = self.patterns_list[self.current_index]
-                print("\ncurrent pattern is :" + current_pattern + "\n")
-                self.current_index += 1
+    def process_and_download(self, pattern):
+        print("\nDownloading pattern: " + pattern + "\n")
+        filepath = download_dataset(pattern)
 
-            filepath = download_dataset(current_pattern)
-            dataset = cl.my_load_dataset(filepath)
+        dataset = cl.my_load_dataset(filepath)
 
-            # Start the next download in a new thread
-            if self.current_index < len(self.patterns_list):
-                threading.Thread(target=self.process_and_download).start()
+        process_lock.acquire()
+        print("\nProcessing pattern: " + pattern + "\n")
+        cl.process_dataset(dataset)
+        process_lock.release()
 
-            with process_lock:
-                cl.process_dataset(dataset)
+        upload_dataset(dataset)
+        delete_dataset(filepath)
 
-            upload_dataset(dataset)
-            delete_dataset(filepath)
+    def run(self):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+            futures = []
+            for pattern in self.patterns_list:
+                futures.append(executor.submit(self.process_and_download, pattern))
+
+            for future in concurrent.futures.as_completed(futures):
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"Exception occurred: {e}")
 
 
 handler = DatasetHandler(allow_patterns_list)
-handler.process_and_download()
+handler.run()
