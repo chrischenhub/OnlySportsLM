@@ -17,6 +17,7 @@ allow_patterns_list = ['CC-MAIN-2013-20/000_00000.parquet', 'CC-MAIN-2013-20/000
 
 process_lock = threading.Lock()  # Global lock for process
 
+
 def get_disk_usage():
     total, used, free = shutil.disk_usage(local_dir)
     return used
@@ -26,8 +27,6 @@ def download_dataset(allow_patterns):
     while get_disk_usage() > max_disk_usage:
         print("exceeding max disk usage")
         threading.Event().wait(5)  # 等待5秒后重新检查磁盘使用量
-def download_dataset(allow_patterns):
-
     filepath = snapshot_download(
         download_hub,
         repo_type="dataset",
