@@ -36,6 +36,6 @@ def add_prefix(example):
 def process_dataset(dataset):
     dataset = dataset.map(compute_scores, batched=True, batch_size=512)
     dataset = dataset.map(add_prefix)
-    dataset = dataset.filter(lambda example: example["label"]==1)
+    dataset = dataset.filter(lambda example: example["ypred"]==1)
 
     return dataset.select_columns(['text'])
