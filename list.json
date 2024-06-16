@@ -1,6 +1,6 @@
 {
-  "patterns": [
-    "test",
-    "test2"
-  ]
+
+    "patterns": [
+        "CC-MAIN-2013-20/000_00000.parquet"
+    ]
 }
