@@ -43,12 +43,20 @@ def ReadParquet(FilePath):
     return df
 
 def KeywordsFilter(df, label):
+    # keywords = [
+    #     "football", "soccer", "basketball", "baseball", "tennis", 
+    #     "cricket", "rugby", "golf", "volleyball", "sports", "sport", 
+    #     "athletics", "league", "team", "champion", "playoff", "olympics",
+    #     "cup", "worldcup", "fitness", "workout", "gym", "nfl", "nba", 
+    #     "mlb", "nhl", "fifa", "uefa", "ncaa" 
+    # ]
+
     keywords = [
-        "football", "soccer", "basketball", "baseball", "tennis", 
-        "cricket", "rugby", "golf", "volleyball", "sports", "sport", 
-        "athletics", "league", "team", "champion", "playoff", "olympics",
-        "cup", "worldcup", "fitness", "workout", "gym", "nfl", "nba", 
-        "mlb", "nhl", "fifa", "uefa", "ncaa" 
+    "football", "soccer", "basketball", "baseball", "tennis",'athlete','running','marathon','copa'
+    "cricket", "rugby", "golf", "volleyball", "sports", "sport", 'Sport','wrestling','wwe', 'hockey','volleyball','cycling','swim',
+    "athletic", "league", "team", "champion", "playoff", "olympic",'premierleague','laliga','bundesliga','seriea','ligue1','epl','laliga','bundesliga','seriea','ligue1','racing','nascar','motogp',
+    "cup", "worldcup", "fitness", "workout", "gym", "nfl", "nba", 'NBA','NFL','MLB','NHL','FIFA','UEFA','NCAA','MMA','UFC','ufc',
+    "mlb", "nhl", "fifa", "uefa", "ncaa",'boxing','espn','bleacherreport','mma','si.com','formula1','f1','nytimes/athletic','apnews.com','goal',
     ]
     
     NonSportsFilter = [url for url in df['url'] if not any(keyword in url for keyword in keywords)]
