@@ -16,6 +16,7 @@ class DownloadAndFilterHandler:
     def download_filter(self, pattern):
         filepath = download_dataset(pattern)
         dataset = cl.my_load_dataset(filepath)
+        dataset = dataset.select_columns(['text','url','dump','token_count'])
         dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
         upload_dataset(dataset)
 

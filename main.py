@@ -48,7 +48,7 @@ class DatasetHandler:
         filepath = download_dataset(pattern)
 
         dataset = cl.my_load_dataset(filepath)
-        dataset = dataset.select_columns(['text','url','token_count'])
+        dataset = dataset.select_columns(['text','url','dump','token_count'])
 
         print("\nProcessing pattern: " + pattern + "\n")
         dataset = cl.process_dataset(dataset)
