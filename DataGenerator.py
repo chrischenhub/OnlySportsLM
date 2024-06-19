@@ -52,7 +52,7 @@ def KeywordsFilter(df, label):
     # ]
 
     keywords = [
-    "football", "soccer", "basketball", "baseball", "tennis",'athlete','running','marathon','copa'
+    "football", "soccer", "basketball", "baseball", "tennis",'athlete','running','marathon','copa','new','nike','adidas'
     "cricket", "rugby", "golf", "volleyball", "sports", "sport", 'Sport','wrestling','wwe', 'hockey','volleyball','cycling','swim',
     "athletic", "league", "team", "champion", "playoff", "olympic",'premierleague','laliga','bundesliga','seriea','ligue1','epl','laliga','bundesliga','seriea','ligue1','racing','nascar','motogp',
     "cup", "worldcup", "fitness", "workout", "gym", "nfl", "nba", 'NBA','NFL','MLB','NHL','FIFA','UEFA','NCAA','MMA','UFC','ufc',

@@ -22,11 +22,8 @@ def compute_scores(batch):
     with torch.no_grad():
         outputs = model(**inputs)
         logits = outputs.logits.squeeze(-1).float().cpu().numpy()
-
-    #predicted_class_id = logits.argmax().item()
     batch["score"] =  logits.tolist()
-   # batch['label'] = logits.argmax().tolist()
-    #batch["int_score"] = [int(round(max(0, min(score, 5)))) for score in logits]
+
     return batch
 
 def add_prefix(example):
@@ -38,4 +35,4 @@ def process_dataset(dataset):
     dataset = dataset.map(add_prefix)
     dataset = dataset.filter(lambda example: example["ypred"]==1)
 
-    return dataset.select_columns(['text'])
+    return dataset.select_columns(['text','url','token_count'])
