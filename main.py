@@ -24,7 +24,7 @@ def download_dataset(allow_patterns):
         download_hub,
         repo_type="dataset",
         local_dir=local_dir,
-        allow_patterns=allow_patterns_prefix + allow_patterns + "*")
+        allow_patterns=allow_patterns_prefix + allow_patterns + "/*")
     return filepath
 
 def upload_dataset(dataset):
