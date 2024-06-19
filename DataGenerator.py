@@ -24,6 +24,19 @@ parser.add_argument('--max_counter',
                     default=20000, 
                     help='Maximum number of items to process')
 
+keywords = [
+    "football", "soccer", "basketball", "baseball", "tennis", 'athlete', 'running', 'marathon', 'copa', 'new', 'nike',
+    'adidas'
+    "cricket", "rugby", "golf", "volleyball", "sports", "sport", 'Sport', 'wrestling', 'wwe', 'hockey', 'volleyball',
+    'cycling', 'swim',
+    "athletic", "league", "team", "champion", "playoff", "olympic", 'premierleague', 'laliga', 'bundesliga', 'seriea',
+    'ligue1', 'epl', 'laliga', 'bundesliga', 'seriea', 'ligue1', 'racing', 'nascar', 'motogp',
+    "cup", "worldcup", "fitness", "workout", "gym", "nfl", "nba", 'NBA', 'NFL', 'MLB', 'NHL', 'FIFA', 'UEFA', 'NCAA',
+    'MMA', 'UFC', 'ufc',
+    "mlb", "nhl", "fifa", "uefa", "ncaa", 'boxing', 'espn', 'bleacherreport', 'mma', 'si.com', 'formula1', 'f1',
+    'nytimes/athletic', 'apnews.com', 'goal',
+]
+
 def main(FilePath, label, apiKey, MaxCounter):
     df = ReadParquet(FilePath)
     if label == 0:
@@ -51,13 +64,7 @@ def KeywordsFilter(df, label):
     #     "mlb", "nhl", "fifa", "uefa", "ncaa" 
     # ]
 
-    keywords = [
-    "football", "soccer", "basketball", "baseball", "tennis",'athlete','running','marathon','copa','new','nike','adidas'
-    "cricket", "rugby", "golf", "volleyball", "sports", "sport", 'Sport','wrestling','wwe', 'hockey','volleyball','cycling','swim',
-    "athletic", "league", "team", "champion", "playoff", "olympic",'premierleague','laliga','bundesliga','seriea','ligue1','epl','laliga','bundesliga','seriea','ligue1','racing','nascar','motogp',
-    "cup", "worldcup", "fitness", "workout", "gym", "nfl", "nba", 'NBA','NFL','MLB','NHL','FIFA','UEFA','NCAA','MMA','UFC','ufc',
-    "mlb", "nhl", "fifa", "uefa", "ncaa",'boxing','espn','bleacherreport','mma','si.com','formula1','f1','nytimes/athletic','apnews.com','goal',
-    ]
+
     
     NonSportsFilter = [url for url in df['url'] if not any(keyword in url for keyword in keywords)]
     SportsFilter = [url for url in df['url'] if any(keyword in url for keyword in keywords)]
