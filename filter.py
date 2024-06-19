@@ -22,7 +22,9 @@ class DownloadAndFilterHandler:
     def download_filter(self, pattern):
         download_dataset(pattern)
 
-        file_names = [f for f in os.listdir('.') if os.path.isfile(f)]
+        #change file path / change os.path.isfile(f)
+        #add log
+        file_names = [f for f in os.listdir('./downloads/test/data/CC-MAIN-2013-20/') if os.path.isfile(f)]
 
         # 使用线程池处理文件
         with concurrent.futures.ThreadPoolExecutor() as executor:
