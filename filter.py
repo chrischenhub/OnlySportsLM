@@ -1,48 +1,38 @@
 import argparse
 import test_classifier as cl
 import threading
-
-import concurrent.futures
 import json
-from main import access_token,default_patterns_list, download_dataset, upload_dataset, delete_dataset
+from main import access_token, default_patterns_list, download_dataset, upload_dataset, delete_dataset
 from DataGenerator import keywords
 import os
 
 class DownloadAndFilterHandler:
-    def __init__(self, patterns_list, num_threads):
+    def __init__(self, patterns_list):
         self.patterns_list = patterns_list
-        self.num_threads = num_threads
         self.lock = threading.Lock()
+
+    def process_file(self, file_name):
+        dataset = cl.my_load_dataset(file_name)
+        dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
+        dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
+        upload_dataset(dataset)
+        delete_dataset(file_name)
 
     def download_filter(self, pattern):
         download_dataset(pattern)
 
         file_names = [f for f in os.listdir('.') if os.path.isfile(f)]
 
-        # 打印所有文件名
-        for file_name in file_names:
-            dataset = cl.my_load_dataset(file_name)
-            dataset = dataset.select_columns(['text','url','dump','token_count'])
-            dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
-            upload_dataset(dataset)
-            delete_dataset(file_name)
+        # 使用线程池处理文件
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            executor.map(self.process_file, file_names)
 
     def run(self):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_threads) as executor:
-            futures = []
-            for pattern in self.patterns_list:
-                futures.append(executor.submit(self.download_filter, pattern))
-
-            for future in concurrent.futures.as_completed(futures):
-                try:
-                    future.result()
-                except Exception as e:
-                    print(f"Exception occurred: {e}")
-
+        for pattern in self.patterns_list:
+            self.download_filter(pattern)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Dataset handling script.")
-    parser.add_argument('-t', '--threads', type=int, default=3, help='Number of threads in the thread pool')
     parser.add_argument('-j', '--json', type=str, help='Path to JSON file with allow patterns list')
     return parser.parse_args()
 
@@ -57,9 +47,8 @@ def main():
     else:
         allow_patterns_list = default_patterns_list
 
-    print("pattern list: \n" + str(allow_patterns_list))
 
-    handler = DownloadAndFilterHandler(allow_patterns_list, args.threads)
+    handler = DownloadAndFilterHandler(allow_patterns_list)
     handler.run()
 
 
