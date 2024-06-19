@@ -4,8 +4,9 @@ import threading
 
 import concurrent.futures
 import json
-from main import access_token,default_patterns_list, download_dataset, upload_dataset
+from main import access_token,default_patterns_list, download_dataset, upload_dataset, delete_dataset
 from DataGenerator import keywords
+import os
 
 class DownloadAndFilterHandler:
     def __init__(self, patterns_list, num_threads):
@@ -14,11 +15,17 @@ class DownloadAndFilterHandler:
         self.lock = threading.Lock()
 
     def download_filter(self, pattern):
-        filepath = download_dataset(pattern)
-        dataset = cl.my_load_dataset(filepath)
-        dataset = dataset.select_columns(['text','url','dump','token_count'])
-        dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
-        upload_dataset(dataset)
+        download_dataset(pattern)
+
+        file_names = [f for f in os.listdir('.') if os.path.isfile(f)]
+
+        # 打印所有文件名
+        for file_name in file_names:
+            dataset = cl.my_load_dataset(file_name)
+            dataset = dataset.select_columns(['text','url','dump','token_count'])
+            dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
+            upload_dataset(dataset)
+            delete_dataset(file_name)
 
     def run(self):
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_threads) as executor:
