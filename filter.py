@@ -13,6 +13,7 @@ class DownloadAndFilterHandler:
         self.lock = threading.Lock()
 
     def process_file(self, file_name):
+        print("processing file {}".format(file_name))
         dataset = cl.my_load_dataset(file_name)
         dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
         dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
@@ -20,8 +21,6 @@ class DownloadAndFilterHandler:
         delete_dataset(file_name)
 
     def download_filter(self, pattern):
-        download_dataset(pattern)
-
         file_names = [f for f in os.listdir('.') if os.path.isfile(f)]
 
         # 使用线程池处理文件
