@@ -5,6 +5,7 @@ import threading
 import concurrent.futures
 import json
 from main import access_token,default_patterns_list, download_dataset, upload_dataset
+from DataGenerator import keywords
 
 class DownloadAndFilterHandler:
     def __init__(self, patterns_list, num_threads):
