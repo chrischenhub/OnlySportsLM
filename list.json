@@ -1,8 +1,5 @@
 {
-
     "patterns": [
-        "CC-MAIN-2013-20/000_00000.parquet",
-        "CC-MAIN-2013-20/000_00001.parquet",
-        "CC-MAIN-2013-20/000_00002.parquet"
+        "CC-MAIN-2013-20"
     ]
 }
