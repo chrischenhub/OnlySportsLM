@@ -33,6 +33,8 @@ def process_sub_page(sub_url, prefix):
         if span.string:
             results.append(f"{prefix}/{span.string}")
 
+    print("prefix:" + prefix + "  url: \n" + str(results))
+
     with lock:
         if not os.path.exists('result.json'):
             with open('result.json', 'w') as f:
@@ -45,8 +47,8 @@ def process_sub_page(sub_url, prefix):
             json.dump(data, f, indent=4)
 
 def main():
+    results = fetch_and_process(mainUrl)
     with ThreadPoolExecutor(max_workers=5) as executor:  # 设置线程池大小为5
-        results= fetch_and_process(mainUrl)
         try:
             for sub_url, prefix in results:
                 executor.submit(process_sub_page, sub_url, prefix)
