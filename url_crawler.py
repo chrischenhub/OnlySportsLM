@@ -32,21 +32,7 @@ def process_sub_page(sub_url, prefix):
     for span in span_elements:
         if span.string:
             results.append(f"{prefix}/{span.string}")
-    return results
 
-def main():
-    with ThreadPoolExecutor(max_workers=5) as executor:  # 设置线程池大小为5
-        future_to_url = {executor.submit(fetch_and_process, mainUrl): mainUrl}
-        for future in as_completed(future_to_url):
-            url = future_to_url[future]
-            try:
-                results = future.result()
-                for sub_url, prefix in results:
-                    executor.submit(process_sub_page, sub_url, prefix)
-            except Exception as exc:
-                print(f"{url} generated an exception: {exc}")
-
-    # 写入到 JSON 文件
     with lock:
         if not os.path.exists('result.json'):
             with open('result.json', 'w') as f:
@@ -57,6 +43,17 @@ def main():
 
         with open('result.json', 'w') as f:
             json.dump(data, f, indent=4)
+
+def main():
+    with ThreadPoolExecutor(max_workers=5) as executor:  # 设置线程池大小为5
+        results= fetch_and_process(mainUrl)
+        try:
+            for sub_url, prefix in results:
+                executor.submit(process_sub_page, sub_url, prefix)
+        except Exception as exc:
+            print(f"{sub_url} generated an exception: {exc}")
+
+
 
 if __name__ == "__main__":
     main()

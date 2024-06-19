@@ -6,9 +6,9 @@ import os
 import shutil
 import concurrent.futures
 import json
-import Datagenerator.keywords as keywords
+from DataGenerator import keywords
 
-download_hub = "Chrisneverdie/sports-annotation-test"
+download_hub = "HuggingFaceFW/fineweb"
 upload_hub = "Chrisneverdie/sports-annotation-outcome"
 local_dir = "./downloads/test/"
 access_token = "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"
@@ -69,29 +69,6 @@ class DatasetHandler:
                     print(f"Exception occurred: {e}")
 
 
-class DownloadAndFilterHandler:
-    def __init__(self, patterns_list, num_threads):
-        self.patterns_list = patterns_list
-        self.num_threads = num_threads
-        self.lock = threading.Lock()
-
-    def download_filter(self, pattern):
-        filepath = download_dataset(pattern)
-        dataset = load_dataset(filepath)
-        dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
-        upload_dataset(dataset)
-
-    def run(self):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_threads) as executor:
-            futures = []
-            for pattern in self.patterns_list:
-                futures.append(executor.submit(self.download_filter, pattern))
-
-            for future in concurrent.futures.as_completed(futures):
-                try:
-                    future.result()
-                except Exception as e:
-                    print(f"Exception occurred: {e}")
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Dataset handling script.")
