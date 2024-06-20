@@ -28,7 +28,7 @@ def download_dataset(allow_patterns):
     return filepath
 
 def upload_dataset(dataset, data_dir):
-    dataset.push_to_hub(upload_hub, data_dir = data_dir, private=False, max_shard_size="4096MB", token=access_token)
+    dataset.push_to_hub(upload_hub, data_dir=data_dir, private=False, max_shard_size="4096MB", token=access_token)
 
 def delete_dataset(filepath):
     if os.path.exists(filepath):
