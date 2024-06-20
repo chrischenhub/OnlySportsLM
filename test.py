@@ -3,8 +3,15 @@ import os
 
 pattern = "pattern"
 
-pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
-file_names = [f for f in os.listdir(pattern_path)]
-full_paths = [pattern_path + filename for filename in file_names]
+
+def process_file(file_path):
+    print("loading file {}\n".format(file_path))
+    dataset = cl.my_load_dataset(file_path)
+    print("finished loading file {}, start filtering\n".format(file_path))
+    dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
+    dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
+    print("finished filtering file {}, start uploading\n", format(file_path))
+
+
 
 print(full_paths)

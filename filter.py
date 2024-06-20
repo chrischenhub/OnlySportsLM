@@ -6,6 +6,7 @@ from main import allow_patterns_prefix, default_patterns_list, download_dataset,
 from DataGenerator import keywords
 import os
 import concurrent.futures
+from datasets import load_dataset
 
 class DownloadAndFilterHandler  :
     def __init__(self, patterns_list):
@@ -14,19 +15,19 @@ class DownloadAndFilterHandler  :
 
     def process_file(self, file_path):
         print("loading file {}\n".format(file_path))
-        dataset = cl.my_load_dataset(file_path)
+        dataset = load_dataset("parquet", data_files={'train': file_path})
         print("finished loading file {}, start filtering\n".format(file_path))
         dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
         dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
-        print("finished filtering fule {}, start uploading\n", format(file_path))
+        print("finished filtering file {}, start uploading\n", format(file_path))
         upload_dataset(dataset)
         delete_dataset(file_path)
 
     def download_filter(self, pattern):
-        download_dataset(pattern)
-        #change file path / change os.path.isfile(f)
-        #add log
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
+        if not os.path.exists(pattern_path):
+            download_dataset(pattern)
+
         file_names = [f for f in os.listdir(pattern_path)]
         full_paths = [pattern_path + filename for filename in file_names]
 
