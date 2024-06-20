@@ -10,7 +10,7 @@ from DataGenerator import keywords
 
 download_hub = "HuggingFaceFW/fineweb"
 upload_hub = "Chrisneverdie/OnlySports"
-local_dir = "./downloads/test/"
+local_download_dir = "./downloads/test/"
 access_token = "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"
 max_disk_usage = 100 * 1024 * 1024 * 1024 * 10 # 1000GB
 allow_patterns_prefix = "data/"
@@ -23,7 +23,7 @@ def download_dataset(allow_patterns):
     filepath = snapshot_download(
         download_hub,
         repo_type="dataset",
-        local_dir=local_dir,
+        local_dir=local_download_dir,
         allow_patterns=allow_patterns_prefix + allow_patterns + "/*")
     return filepath
 

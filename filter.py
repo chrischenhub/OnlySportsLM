@@ -2,7 +2,7 @@ import argparse
 import test_classifier as cl
 import threading
 import json
-from main import access_token, default_patterns_list, download_dataset, upload_dataset, delete_dataset, local_dir
+from main import allow_patterns_prefix, default_patterns_list, download_dataset, upload_dataset, delete_dataset, local_download_dir
 from DataGenerator import keywords
 import os
 import concurrent.futures
@@ -12,8 +12,7 @@ class DownloadAndFilterHandler  :
         self.patterns_list = patterns_list
         self.lock = threading.Lock()
 
-    def process_file(self, file_name):
-        file_path = os.path.join(local_dir, file_name)
+    def process_file(self, file_path):
         dataset = cl.my_load_dataset(file_path)
         dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
         dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
@@ -25,11 +24,13 @@ class DownloadAndFilterHandler  :
 
         #change file path / change os.path.isfile(f)
         #add log
-        file_names = [f for f in os.listdir(str(os.path.join(local_dir, pattern)))]
+        pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
+        file_names = [f for f in os.listdir(pattern_path)]
+        full_paths = [pattern_path + filename + "/" for filename in file_names]
 
         # 使用线程池处理文件
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(self.process_file, file_names)
+            executor.map(self.process_file, full_paths)
 
     def run(self):
         for pattern in self.patterns_list:
