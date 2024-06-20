@@ -13,15 +13,17 @@ class DownloadAndFilterHandler  :
         self.lock = threading.Lock()
 
     def process_file(self, file_path):
+        print("loading file {}\n".format(file_path))
         dataset = cl.my_load_dataset(file_path)
+        print("finished loading file {}, start filtering\n".format(file_path))
         dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
         dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
+        print("finished filtering fule {}, start uploading\n", format(file_path))
         upload_dataset(dataset)
         delete_dataset(file_path)
 
     def download_filter(self, pattern):
         download_dataset(pattern)
-
         #change file path / change os.path.isfile(f)
         #add log
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
