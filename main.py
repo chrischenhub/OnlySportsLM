@@ -27,8 +27,8 @@ def download_dataset(allow_patterns):
         allow_patterns=allow_patterns_prefix + allow_patterns + "/*")
     return filepath
 
-def upload_dataset(dataset):
-    dataset.push_to_hub(upload_hub, config_name=upload_folder, private=False, max_shard_size="4096MB", token=access_token)
+def upload_dataset(dataset, data_dir):
+    dataset.push_to_hub(upload_hub, data_dir = data_dir, private=False, max_shard_size="4096MB", token=access_token)
 
 def delete_dataset(filepath):
     if os.path.exists(filepath):
@@ -53,7 +53,7 @@ class DatasetHandler:
         print("\nProcessing pattern: " + pattern + "\n")
         dataset = cl.process_dataset(dataset)
 
-        upload_dataset(dataset)
+        upload_dataset(dataset, "data")
         delete_dataset(filepath)
 
     def run(self):
