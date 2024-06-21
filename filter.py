@@ -49,7 +49,7 @@ class DownloadAndFilterHandler:
             return
 
         print(f"Loading file {file_path}\n")
-        dataset = ds.dataset(file_path, format='parquet')
+        print(f"Finished loading file {file_path}, start filtering\n")
         print(f"Finished loading file {file_path}, start filtering\n")
         dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
         dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
