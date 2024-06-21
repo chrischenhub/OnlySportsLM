@@ -7,8 +7,8 @@ import os
 import concurrent.futures
 from datasets import load_dataset, disable_caching
 from filelock import FileLock
-
-disable_caching()
+import pyarrow.dataset as ds
+import pyarrow.parquet as pq
 
 cache_dir = "/root/.cache/huggingface"
 
@@ -49,7 +49,7 @@ class DownloadAndFilterHandler:
             return
 
         print(f"Loading file {file_path}\n")
-        dataset = load_dataset("parquet", data_files={'train': file_path})
+        dataset = ds.dataset(file_path, format='parquet')
         print(f"Finished loading file {file_path}, start filtering\n")
         dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
         dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
@@ -57,6 +57,7 @@ class DownloadAndFilterHandler:
         parts = file_path.split(os.path.sep)
         upload_dataset(dataset, str(parts[-2]) + "_" + str(parts[-1]))
         self.update_processed_files('upload.txt', file_path)
+        os.remove(file_path)
 
     def download_filter(self, pattern):
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
@@ -76,7 +77,7 @@ class DownloadAndFilterHandler:
 
             concurrent.futures.wait(future_to_path, return_when=concurrent.futures.ALL_COMPLETED)
         print("All Finished, Start Deleting")
-        delete_files(pattern_path)
+        delete_files(cache_dir)
 
 
     def run(self):
