@@ -13,9 +13,9 @@ from filelock import FileLock
 cache_dir = "/root/.cache/huggingface"
 
 dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2019-04",
-                    split="train", cache_dir="/cache/", num_proc=12)
+                    split="train", cache_dir="/cache/", num_proc=4)
 
 
 dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
-dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
+dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords),num_proc=4)
 upload_dataset(dataset, "CC-MAIN-2019-04")
