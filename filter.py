@@ -49,6 +49,7 @@ class DownloadAndFilterHandler:
             return
 
         print(f"Loading file {file_path}\n")
+        dataset = load_dataset("parquet", data_files={'train': file_path})
         print(f"Finished loading file {file_path}, start filtering\n")
         print(f"Finished loading file {file_path}, start filtering\n")
         dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
