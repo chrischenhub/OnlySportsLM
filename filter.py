@@ -24,7 +24,7 @@ def delete_files(file_path):
 
 
 class DownloadAndFilterHandler:
-    def __init__(self, patterns_list):
+    def __init__(self, patterns_list, num_proc):
         self.patterns_list = patterns_list
         self.lock = threading.Lock()
         self.downloaded_files = self.load_processed_files('download.txt')
@@ -76,7 +76,7 @@ class DownloadAndFilterHandler:
         print("full_paths: " + str(full_paths))
 
         # 使用线程池处理文件
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_threads) as executor:
             future_to_path = {executor.submit(self.process_file, path): path for path in full_paths}
 
             concurrent.futures.wait(future_to_path, return_when=concurrent.futures.ALL_COMPLETED)
@@ -90,6 +90,7 @@ class DownloadAndFilterHandler:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Dataset handling script.")
+    parser.add_argument('-t', '--threads', type=int, default=3, help='Number of threads in the thread pool')
     parser.add_argument('-j', '--json', type=str, help='Path to JSON file with allow patterns list')
     return parser.parse_args()
 
@@ -103,7 +104,7 @@ def main():
     else:
         allow_patterns_list = default_patterns_list
 
-    handler = DownloadAndFilterHandler(allow_patterns_list)
+    handler = DownloadAndFilterHandler(allow_patterns_list, args.threads)
     handler.run()
 
 if __name__ == "__main__":
