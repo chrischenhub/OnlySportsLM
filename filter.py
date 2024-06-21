@@ -55,6 +55,7 @@ class DownloadAndFilterHandler:
         parts = file_path.split(os.path.sep)
         upload_dataset(dataset, str(parts[-2]) + "_" + str(parts[-1]))
         self.update_processed_files('upload.txt', file_path)
+        dataset.cleanup_cache_files()
 
     def download_filter(self, pattern):
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
@@ -75,7 +76,6 @@ class DownloadAndFilterHandler:
             concurrent.futures.wait(future_to_path, return_when=concurrent.futures.ALL_COMPLETED)
 
         delete_files(pattern_path)
-        delete_files(cache_dir)
 
 
     def run(self):
