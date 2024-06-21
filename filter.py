@@ -5,8 +5,10 @@ from main import allow_patterns_prefix, default_patterns_list, download_dataset,
 from DataGenerator import keywords
 import os
 import concurrent.futures
-from datasets import load_dataset
+from datasets import load_dataset, disable_caching
 from filelock import FileLock
+
+disable_caching()
 
 cache_dir = "/root/.cache/huggingface"
 
@@ -55,7 +57,6 @@ class DownloadAndFilterHandler:
         parts = file_path.split(os.path.sep)
         upload_dataset(dataset, str(parts[-2]) + "_" + str(parts[-1]))
         self.update_processed_files('upload.txt', file_path)
-        dataset.cleanup_cache_files()
 
     def download_filter(self, pattern):
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
@@ -74,7 +75,7 @@ class DownloadAndFilterHandler:
             future_to_path = {executor.submit(self.process_file, path): path for path in full_paths}
 
             concurrent.futures.wait(future_to_path, return_when=concurrent.futures.ALL_COMPLETED)
-
+        print("All Finished, Start Deleting")
         delete_files(pattern_path)
 
 
