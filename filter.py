@@ -58,6 +58,7 @@ class DownloadAndFilterHandler:
         parts = file_path.split(os.path.sep)
         upload_dataset(dataset, str(parts[-2]) + "_" + str(parts[-1]))
         self.update_processed_files('upload.txt', file_path)
+        print（"file: {} finished, start deleting", file_path)
         os.remove(file_path)
 
     def download_filter(self, pattern):
