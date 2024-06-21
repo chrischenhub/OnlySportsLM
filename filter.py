@@ -56,7 +56,7 @@ class DownloadAndFilterHandler:
         dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
         print(f"Finished filtering file {file_path}, start uploading\n")
         parts = file_path.split(os.path.sep)
-        upload_dataset(dataset, str(parts[-2]) + "_" + str(parts[-1]))
+        upload_dataset(dataset, str(parts[-2]) + "/" + str(parts[-1]).rstrip(".parquet"))
         self.update_processed_files('upload.txt', file_path)
         print("file: {} finished, start deleting", file_path)
         os.remove(file_path)
