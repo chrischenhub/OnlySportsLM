@@ -8,6 +8,19 @@ import concurrent.futures
 from datasets import load_dataset
 from filelock import FileLock
 
+cache_dir = "/root/.cache/huggingface"
+
+def delete_files(file_path):
+    for root, dirs, files in os.walk(file_path, topdown=False):
+        for name in files:
+            file_path = os.path.join(root, name)
+            os.remove(file_path)
+        for name in dirs:
+            dir_path = os.path.join(root, name)
+            os.rmdir(dir_path)
+
+
+
 class DownloadAndFilterHandler:
     def __init__(self, patterns_list):
         self.patterns_list = patterns_list
@@ -20,6 +33,7 @@ class DownloadAndFilterHandler:
             with open(file_name, 'r') as f:
                 return set(f.read().splitlines())
         return set()
+
 
     def update_processed_files(self, file_name, file_path):
         lock_file = f"{file_name}.lock"
@@ -41,7 +55,6 @@ class DownloadAndFilterHandler:
         parts = file_path.split(os.path.sep)
         upload_dataset(dataset, str(parts[-2]) + "_" + str(parts[-1]))
         self.update_processed_files('upload.txt', file_path)
-        delete_dataset(file_path + ".parquet")
 
     def download_filter(self, pattern):
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
@@ -57,7 +70,13 @@ class DownloadAndFilterHandler:
 
         # 使用线程池处理文件
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(self.process_file, full_paths)
+            future_to_path = {executor.submit(self.process_file, path): path for path in full_paths}
+
+            concurrent.futures.wait(future_to_path, return_when=concurrent.futures.ALL_COMPLETED)
+
+        delete_files(pattern_path)
+        delete_files(cache_dir)
+
 
     def run(self):
         for pattern in self.patterns_list:
