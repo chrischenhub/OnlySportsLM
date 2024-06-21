@@ -72,6 +72,8 @@ class DownloadAndFilterHandler:
         file_names = [f for f in os.listdir(pattern_path)]
         full_paths = [pattern_path + filename for filename in file_names]
 
+        print("full_paths: " + str(full_paths))
+
         # 使用线程池处理文件
         with concurrent.futures.ThreadPoolExecutor() as executor:
             future_to_path = {executor.submit(self.process_file, path): path for path in full_paths}
