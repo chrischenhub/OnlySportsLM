@@ -29,6 +29,7 @@ class DownloadAndFilterHandler:
         self.lock = threading.Lock()
         self.downloaded_files = self.load_processed_files('download.txt')
         self.uploaded_files = self.load_processed_files('upload.txt')
+        self.num_threads ＝ num_proc
 
     def load_processed_files(self, file_name):
         if os.path.exists(file_name):
