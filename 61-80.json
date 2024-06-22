@@ -1,6 +1,6 @@
 {
   "patterns" : [
-            "CC-MAIN-2019-43",
+        "CC-MAIN-2019-43",
         "CC-MAIN-2019-47",
         "CC-MAIN-2019-51",
         "CC-MAIN-2020-05",
@@ -16,6 +16,6 @@
         "CC-MAIN-2021-10",
         "CC-MAIN-2021-17",
         "CC-MAIN-2021-21",
-        "CC-MAIN-2021-25",
+        "CC-MAIN-2021-25"
   ]
 }
