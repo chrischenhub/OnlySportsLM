@@ -36,6 +36,7 @@ def filter_urls(df):
 import os
 from pyarrow import parquet as pq
 from pyarrow import Table
+import gc
 
 input_directory = './downloads/test/data/CC-MAIN-2017-17/'
 output_directory = './downloads/test/data/CC-MAIN-2017-17-filtered/'
@@ -53,6 +54,9 @@ for filename in os.listdir(input_directory):
         print(f'{filename} filtered')
         del df, filtered_df
         os.remove(filepath)
+        gc.collect()
+        
+
 
 import pyarrow as pa
 
