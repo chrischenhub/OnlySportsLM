@@ -21,7 +21,14 @@ def delete_files(file_path):
             dir_path = os.path.join(root, name)
             os.rmdir(dir_path)
 
-
+def log_error(error_message):
+    error_file = 'error.txt'
+    with FileLock(error_file + '.lock'):
+        if not os.path.exists(error_file):
+            with open(error_file, 'w') as f:
+                f.write("Error Log\n")
+        with open(error_file, 'a') as f:
+            f.write(error_message + '\n')
 
 class DownloadAndFilterHandler:
     def __init__(self, patterns_list, num_proc):
@@ -37,7 +44,6 @@ class DownloadAndFilterHandler:
                 return set(f.read().splitlines())
         return set()
 
-
     def update_processed_files(self, file_name, file_path):
         lock_file = f"{file_name}.lock"
         with FileLock(lock_file):
@@ -45,22 +51,40 @@ class DownloadAndFilterHandler:
                 f.write(file_path + '\n')
 
     def process_file(self, file_path):
-        if file_path in self.uploaded_files:
-            print(f"File {file_path} already uploaded, skipping.")
+        try:
+            if file_path in self.uploaded_files:
+                print(f"File {file_path} already uploaded, skipping.")
+                return
+
+            print(f"Loading file {file_path}\n")
+            dataset = load_dataset("parquet", data_files={'train': file_path})
+        except Exception as e:
+            log_error(f"Error loading file {file_path}: {str(e)}")
             return
 
-        print(f"Loading file {file_path}\n")
-        dataset = load_dataset("parquet", data_files={'train': file_path})
-        print(f"Finished loading file {file_path}, start filtering\n")
-        print(f"Finished loading file {file_path}, start filtering\n")
-        dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
-        dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
-        print(f"Finished filtering file {file_path}, start uploading\n")
-        parts = file_path.split(os.path.sep)
-        upload_dataset(dataset, str(parts[-2]) + "/" + str(parts[-1]).rstrip(".parquet"))
-        self.update_processed_files('upload.txt', file_path)
-        print("file: {} finished, start deleting", file_path)
-        os.remove(file_path)
+        try:
+            print(f"Finished loading file {file_path}, start filtering\n")
+            dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
+            dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
+        except Exception as e:
+            log_error(f"Error filtering file {file_path}: {str(e)}")
+            return
+
+        try:
+            print(f"Finished filtering file {file_path}, start uploading\n")
+            parts = file_path.split(os.path.sep)
+            upload_dataset(dataset, str(parts[-2]) + "/" + str(parts[-1]).rstrip(".parquet"))
+            self.update_processed_files('upload.txt', file_path)
+        except Exception as e:
+            log_error(f"Error uploading file {file_path}: {str(e)}")
+            return
+
+        try:
+            print(f"file: {file_path} finished, start deleting")
+            os.remove(file_path)
+        except Exception as e:
+            log_error(f"Error deleting file {file_path}: {str(e)}")
+            return
 
     def download_filter(self, pattern):
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
@@ -68,45 +92,37 @@ class DownloadAndFilterHandler:
         if pattern in self.downloaded_files:
             print(f"Pattern {pattern} already downloaded, skipping.")
         else:
-            download_dataset(pattern)
-            self.update_processed_files('download.txt', pattern)
+            try:
+                download_dataset(pattern)
+                self.update_processed_files('download.txt', pattern)
+            except Exception as e:
+                log_error(f"Error downloading dataset for pattern {pattern}: {str(e)}")
+                return
 
         file_names = [f for f in os.listdir(pattern_path)]
         full_paths = [pattern_path + filename for filename in file_names]
 
         print("full_paths: " + str(full_paths))
 
-        # 使用线程池处理文件
+        # Use ThreadPoolExecutor to process files
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_threads) as executor:
             future_to_path = {executor.submit(self.process_file, path): path for path in full_paths}
 
             concurrent.futures.wait(future_to_path, return_when=concurrent.futures.ALL_COMPLETED)
-        print("All Finished, Start Deleting")
-        delete_files(cache_dir)
 
+        # Update uploaded_files set after processing
+        self.uploaded_files = self.load_processed_files('upload.txt')
+
+        # Remove already uploaded files from full_paths
+        remaining_paths = [path for path in full_paths if path not in self.uploaded_files]
+
+        # If there are remaining files, call download_filter again
+        if remaining_paths:
+            print("Reprocessing remaining files: " + str(remaining_paths))
+            self.download_filter(pattern)
 
     def run(self):
         for pattern in self.patterns_list:
             self.download_filter(pattern)
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Dataset handling script.")
-    parser.add_argument('-t', '--threads', type=int, default=3, help='Number of threads in the thread pool')
-    parser.add_argument('-j', '--json', type=str, help='Path to JSON file with allow patterns list')
-    return parser.parse_args()
-
-def main():
-    args = parse_args()
-
-    if args.json:
-        with open(args.json, 'r') as f:
-            data = json.load(f)
-            allow_patterns_list = data.get("patterns", default_patterns_list)
-    else:
-        allow_patterns_list = default_patterns_list
-
-    handler = DownloadAndFilterHandler(allow_patterns_list, args.threads)
-    handler.run()
-
-if __name__ == "__main__":
-    main()
+            print("All Finished, Start Deleting")
+            delete_files(cache_dir)
