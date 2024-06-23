@@ -12,7 +12,7 @@ from filelock import FileLock
 
 cache_dir = "/root/.cache/huggingface"
 
-dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2019-04",
+dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2024-18",
                     split="train", cache_dir="/cache/", num_proc=4)
 
 
