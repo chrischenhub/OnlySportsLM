@@ -5,7 +5,7 @@ import argparse
 from huggingface_hub import snapshot_download
 
 download_hub = "HuggingFaceFW/fineweb"
-upload_hub = "Chrisneverdie/OnlySports"
+upload_hub = "Chrisneverdie/OnlySports_filter"
 local_download_dir = "./downloads/test"
 access_token = "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"
 allow_patterns_prefix = "data/"
