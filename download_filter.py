@@ -69,8 +69,8 @@ def process_parquet_files(pattern, group_num):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
-    parser.add_argument("pattern", type=str, help="Target pattern in the hub")
-    parser.add_argument("group_num", type=int, help="Number of files to process in a group")
+    parser.add_argument("-p", "--pattern", type=str, help="Target pattern in the hub", default="default_pattern")
+    parser.add_argument("-g", "--group_num", type=int, help="Number of files to process in a group", default=10)
     args = parser.parse_args()
 
     process_parquet_files(args.pattern, args.group_num)
