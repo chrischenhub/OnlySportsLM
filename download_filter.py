@@ -6,7 +6,7 @@ from huggingface_hub import snapshot_download
 
 download_hub = "HuggingFaceFW/fineweb"
 upload_hub = "Chrisneverdie/OnlySports"
-local_download_dir = "./downloads/"
+local_download_dir = "./downloads/test"
 access_token = "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"
 allow_patterns_prefix = "data/"
 
