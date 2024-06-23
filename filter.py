@@ -110,31 +110,19 @@ class DownloadAndFilterHandler:
 
             concurrent.futures.wait(future_to_path, return_when=concurrent.futures.ALL_COMPLETED)
 
+        # Update uploaded_files set after processing
+        self.uploaded_files = self.load_processed_files('upload.txt')
+
+        # Remove already uploaded files from full_paths
+        remaining_paths = [path for path in full_paths if path not in self.uploaded_files]
+
+        # If there are remaining files, call download_filter again
+        if remaining_paths:
+            print("Reprocessing remaining files: " + str(remaining_paths))
+            self.download_filter(pattern)
 
     def run(self):
         for pattern in self.patterns_list:
             self.download_filter(pattern)
             print("All Finished, Start Deleting")
             delete_files(cache_dir)
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Dataset handling script.")
-    parser.add_argument('-t', '--threads', type=int, default=3, help='Number of threads in the thread pool')
-    parser.add_argument('-j', '--json', type=str, help='Path to JSON file with allow patterns list')
-    return parser.parse_args()
-
-def main():
-    args = parse_args()
-
-    if args.json:
-        with open(args.json, 'r') as f:
-            data = json.load(f)
-            allow_patterns_list = data.get("patterns", default_patterns_list)
-    else:
-        allow_patterns_list = default_patterns_list
-
-    handler = DownloadAndFilterHandler(allow_patterns_list, args.threads)
-    handler.run()
-
-if __name__ == "__main__":
-    main()
