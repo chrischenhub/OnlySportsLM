@@ -36,6 +36,7 @@ for filename in os.listdir(input_directory):
         filtered_df = filter_urls(df)
         output_path = os.path.join(output_directory, f"filtered_{filename}")
         filtered_df.to_parquet(output_path)
+        print(f'{filename} filtered')
         del df, filtered_df
         os.remove(filepath)
 
@@ -55,6 +56,7 @@ def concatenate_parquet_files(input_directory, output_file):
     pq.write_table(concatenated_table, output_file)
     del all_dfs, concatenated_table
 
+print('Concatenating filtered files...')
 output_file = './downloads/outcome/CC-MAIN-2017-17'
 concatenate_parquet_files(output_directory, output_file)
 
