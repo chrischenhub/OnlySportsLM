@@ -39,6 +39,7 @@ def filter_sports_urls(df):
 def process_parquet_files(pattern, group_num):
     directory = download_dataset(pattern)
     print(f"Processing files in directory: {directory}")
+    directory = directory + f'/data/{pattern}'
     # 获取所有的.parquet文件
     parquet_files = glob.glob(os.path.join(directory, '*.parquet'))
     print(f"Found {len(parquet_files)} parquet files.")
