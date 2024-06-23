@@ -55,9 +55,9 @@ def process_parquet_files(pattern, group_num):
             df_filtered = filter_sports_urls(df_merged)
 
             # 确定输出文件名
-            first_file_name = os.path.basename(group_files[0])
-            last_file_name = os.path.basename(group_files[-1])
-            output_file_name = os.path.join(directory, f"{first_file_name.rstrip(".parquet")}_{last_file_name.rstrip(".parquet")}")
+            first_file_name = os.path.basename(group_files[0]).rstrip(".parquet")
+            last_file_name = os.path.basename(group_files[-1]).rstrip(".parquet")
+            output_file_name = os.path.join(directory, f"{first_file_name}_{last_file_name}")
 
             # 保存合并和过滤后的文件
             df_filtered.to_parquet(output_file_name)
