@@ -55,7 +55,7 @@ def compute_metrics(eval_pred):
 
 
 def main(args):
-    dataset = load_dataset('Chrisneverdie/sports-annotation',data_files={'train': 'test.parquet'})
+    dataset = load_dataset('Chrisneverdie/sports-annotation',data_files={'train': 'train.parquet'})
     # dataset = load_dataset(
     #     "Chrisneverdie/sports-annotation", split="train", cache_dir="train/", num_proc=8
     # )
