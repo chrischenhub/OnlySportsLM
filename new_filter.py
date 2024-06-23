@@ -1,23 +1,37 @@
 import pandas as pd
 
 
+# keywords = [
+#     "football", "soccer", "basketball", "baseball", "tennis", 'athlete', 'running', 'marathon', 'copa', 'new', 'nike',
+#     'adidas',
+#     "cricket", "rugby", "golf", "volleyball", "sports", "sport", 'Sport', 'wrestling', 'wwe', 'hockey', 'volleyball',
+#     'cycling', 'swim',
+#     "athletic", "league", "team", "champion", "playoff", "olympic", 'premierleague', 'laliga', 'bundesliga', 'seriea',
+#     'ligue1', 'epl', 'laliga', 'bundesliga', 'seriea', 'ligue1', 'racing', 'nascar', 'motogp',
+#     "cup", "worldcup", "fitness", "workout", "gym", "nfl", "nba", 'NBA', 'NFL', 'MLB', 'NHL', 'FIFA', 'UEFA', 'NCAA',
+#     'MMA', 'UFC', 'ufc',
+#     "mlb", "nhl", "fifa", "uefa", "ncaa", 'boxing', 'espn', 'bleacherreport', 'mma', 'si.com', 'formula1', 'f1',
+#     'nytimes/athletic', 'apnews.com', 'goal',]
+
+# def filter_urls(df):
+#     sports_filter = [url for url in df['url'] if any(keyword in url for keyword in keywords)]
+#     df_filtered = df.loc[df['url'].isin(sports_filter)]
+#     return df_filtered
+
 keywords = [
     "football", "soccer", "basketball", "baseball", "tennis", 'athlete', 'running', 'marathon', 'copa', 'new', 'nike',
-    'adidas'
-    "cricket", "rugby", "golf", "volleyball", "sports", "sport", 'Sport', 'wrestling', 'wwe', 'hockey', 'volleyball',
-    'cycling', 'swim',
-    "athletic", "league", "team", "champion", "playoff", "olympic", 'premierleague', 'laliga', 'bundesliga', 'seriea',
-    'ligue1', 'epl', 'laliga', 'bundesliga', 'seriea', 'ligue1', 'racing', 'nascar', 'motogp',
-    "cup", "worldcup", "fitness", "workout", "gym", "nfl", "nba", 'NBA', 'NFL', 'MLB', 'NHL', 'FIFA', 'UEFA', 'NCAA',
-    'MMA', 'UFC', 'ufc',
-    "mlb", "nhl", "fifa", "uefa", "ncaa", 'boxing', 'espn', 'bleacherreport', 'mma', 'si.com', 'formula1', 'f1',
-    'nytimes/athletic', 'apnews.com', 'goal',]
+    'adidas', "cricket", "rugby", "golf", "volleyball", "sports", "sport", 'Sport', 'wrestling', 'wwe', 'hockey', 
+    'volleyball', 'cycling', 'swim', "athletic", "league", "team", "champion", "playoff", "olympic", 'premierleague', 
+    'laliga', 'bundesliga', 'seriea', 'ligue1', 'epl', 'racing', 'nascar', 'motogp', "cup", "worldcup", "fitness", 
+    "workout", "gym", "nfl", "nba", 'NBA', 'NFL', 'MLB', 'NHL', 'FIFA', 'UEFA', 'NCAA', 'MMA', 'UFC', 'ufc', "mlb", 
+    "nhl", "fifa", "uefa", "ncaa", 'boxing', 'espn', 'bleacherreport', 'mma', 'si.com', 'formula1', 'f1', 
+    'nytimes/athletic', 'apnews.com', 'goal',
+]
 
 def filter_urls(df):
-    sports_filter = [url for url in df['url'] if any(keyword in url for keyword in keywords)]
-    df_filtered = df.loc[df['url'].isin(sports_filter)]
+    pattern = '|'.join(keywords)  # Create a regex pattern from the keywords
+    df_filtered = df[df['url'].str.contains(pattern, case=False, na=False)]  # Use vectorized string operations
     return df_filtered
-
 
 import os
 from pyarrow import parquet as pq
