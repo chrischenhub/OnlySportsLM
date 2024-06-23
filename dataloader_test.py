@@ -7,15 +7,17 @@ import os
 import concurrent.futures
 from datasets import load_dataset, disable_caching
 from filelock import FileLock
+access_token = "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"
 
 #disable_caching()
+HF_HUB_ENABLE_HF_TRANSFER=1
 
 cache_dir = "/root/.cache/huggingface"
 
 dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2024-18",
-                    split="train", num_proc=4)
+                    split="train", num_proc=8)
 
 
 dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
-dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords),num_proc=4)
-upload_dataset(dataset, "CC-MAIN-2019-04")
+dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords),num_proc=8)
+dataset.push_to_hub('Chrisneverdie/OnlySports', data_dir='CC-MAIN-2024-18', private=False, max_shard_size="4096MB", token=access_token)

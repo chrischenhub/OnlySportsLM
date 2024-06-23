@@ -5,10 +5,11 @@ import argparse
 from huggingface_hub import snapshot_download
 
 download_hub = "HuggingFaceFW/fineweb"
-upload_hub = "Chrisneverdie/OnlySports_filter"
+upload_hub = "Chrisneverdie/OnlySports"
 local_download_dir = "./downloads/test"
 access_token = "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"
 allow_patterns_prefix = "data/"
+HF_HUB_ENABLE_HF_TRANSFER=1
 
 keywords = ["football", "soccer", "basketball", "baseball", "tennis", 'athlete', 'running', 'marathon', 'copa',
             'new', 'nike', 'adidas',
