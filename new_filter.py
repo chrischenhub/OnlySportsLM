@@ -38,7 +38,7 @@ import os
 from pyarrow import parquet as pq
 from pyarrow import Table
 import gc
-from datasets import load_dataset, Dataset, DatasetDict
+from datasets import load_dataset, Dataset, DatasetDict,concatenate_datasets
 
 input_directory = './downloads/test/data/CC-MAIN-2017-17/'
 output_directory = './downloads/test/data/CC-MAIN-2017-17-filtered/'
@@ -66,14 +66,15 @@ def process_and_filter_files():
     for filename in os.listdir(input_directory):
         if filename.endswith(".parquet"):
             filepath = os.path.join(input_directory, filename)
-            dataset = load_dataset('parquet', data_files=filepath, split='train')
+            dataset = load_dataset('parquet', data_files=filepath, split='train',num_proc=8)
+            dataset = dataset.select_columns(['text','url','token_count'])
             filtered_dataset = filter_dataset(dataset, keywords)
             #output_path = os.path.join(output_directory, f"filtered_{filename}")
             #filtered_dataset.to_parquet(output_path)
             all_filtered_datasets.append(filtered_dataset)
             os.remove(filepath) 
             gc.collect()
-    concatenated_dataset = Dataset.concatenate(*all_filtered_datasets)
+    concatenated_dataset = concatenate_datasets(*all_filtered_datasets)
     #concatenated_dataset.to_parquet(final_output_file)
     #concatenated_dataset.push_to_hub(repo_id='repo_id', dataset_name=dataset_name)
     concatenated_dataset.push_to_hub("Chrisneverdie/OnlySports", data_dir='C-MAIN-2017-17_fixed', private=False, max_shard_size="4096MB", token=access_token)
