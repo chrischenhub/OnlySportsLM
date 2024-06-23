@@ -13,7 +13,7 @@ from filelock import FileLock
 cache_dir = "/root/.cache/huggingface"
 
 dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2024-18",
-                    split="train", cache_dir="/cache/", num_proc=4)
+                    split="train", num_proc=4)
 
 
 dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
