@@ -23,8 +23,8 @@ import os
 from pyarrow import parquet as pq
 from pyarrow import Table
 
-input_directory = 'work/downloads/test/data/CC-MAIN-2017-17/'
-output_directory = 'work/downloads/test/data/CC-MAIN-2017-17-filtered/'
+input_directory = './downloads/test/data/CC-MAIN-2017-17/'
+output_directory = './downloads/test/data/CC-MAIN-2017-17-filtered/'
 
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)
@@ -55,6 +55,6 @@ def concatenate_parquet_files(input_directory, output_file):
     pq.write_table(concatenated_table, output_file)
     del all_dfs, concatenated_table
 
-output_file = 'work/downloads/outcome/CC-MAIN-2017-17'
+output_file = './downloads/outcome/CC-MAIN-2017-17'
 concatenate_parquet_files(output_directory, output_file)
 
