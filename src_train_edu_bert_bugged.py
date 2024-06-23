@@ -67,7 +67,7 @@ def main(args):
         args.target_column, ClassLabel(names=[str(i) for i in range(6)])
     )
     dataset = dataset['train'].train_test_split(
-        train_size=0.9, seed=24, stratify_by_column=args.target_column
+        train_size=0.9, seed=8, stratify_by_column=args.target_column
     )
 
     tokenizer = AutoTokenizer.from_pretrained(args.base_model_name)
@@ -90,11 +90,11 @@ def main(args):
         output_dir=args.checkpoint_dir,
         evaluation_strategy="steps",
         save_strategy="steps",
-        eval_steps=100,
-        save_steps=100,
+        eval_steps=200,
+        save_steps=200,
         logging_steps=100,
         learning_rate=3e-4,
-        num_train_epochs=5,
+        num_train_epochs=20,
         seed=0,
         per_device_train_batch_size=256,
         per_device_eval_batch_size=128,
