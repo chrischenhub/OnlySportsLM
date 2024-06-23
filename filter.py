@@ -72,40 +72,8 @@ class DownloadAndFilterHandler:
                 f.write(file_path + '\n')
 
     def process_file(self, file_path):
-        try:
-            if file_path in self.uploaded_files:
-                print(f"File {file_path} already uploaded, skipping.")
-                return
+        
 
-            print(f"Loading file {file_path}\n")
-            dataset = load_dataset("parquet", data_files={'train': file_path})
-        except Exception as e:
-            log_error(f"Error loading file {file_path}: {str(e)}")
-            return
-
-        try:
-            print(f"Finished loading file {file_path}, start filtering\n")
-            dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
-            dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
-        except Exception as e:
-            log_error(f"Error filtering file {file_path}: {str(e)}")
-            return
-
-        try:
-            print(f"Finished filtering file {file_path}, start uploading\n")
-            parts = file_path.split(os.path.sep)
-            upload_dataset(dataset, str(parts[-2]) + "/" + str(parts[-1]).rstrip(".parquet"))
-            self.update_processed_files('upload.txt', file_path)
-        except Exception as e:
-            log_error(f"Error uploading file {file_path}: {str(e)}")
-            return
-
-        try:
-            print(f"file: {file_path} finished, start deleting")
-            os.remove(file_path)
-        except Exception as e:
-            log_error(f"Error deleting file {file_path}: {str(e)}")
-            return
 
     def download_filter(self, pattern):
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
