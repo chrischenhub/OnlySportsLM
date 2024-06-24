@@ -47,11 +47,11 @@ def compute_metrics(eval_pred):
     with open(log_file_path, 'a') as log_file:
         log_file.write(report)
         log_file.write(str(cm))
-        log_file.write({
-        "precision": precision,
-        "recall": recall,
-        "f1": f1,
-        "accuracy": accuracy,})
+        
+        log_file.write("precision" + precision)
+        log_file.write("recall" + recall)
+        log_file.write("f1" + f1)
+        log_file.write("accuracy" + accuracy)
 
     return {
         "precision": precision,
