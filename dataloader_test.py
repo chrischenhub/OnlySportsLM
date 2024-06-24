@@ -14,7 +14,7 @@ HF_HUB_ENABLE_HF_TRANSFER=1
 
 cache_dir = "/root/.cache/huggingface"
 
-dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2024-10",
+dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2023-50",
                     split="train", num_proc=8)
 
 
@@ -23,4 +23,4 @@ print('Dataset loaded, filtering...')
 dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords),num_proc=8)
 
 print('Dataset filtered, uploading...')
-dataset.push_to_hub('Chrisneverdie/OnlySports', data_dir='CC-MAIN-2024-10', private=False, max_shard_size="4096MB", token=access_token)
+dataset.push_to_hub('Chrisneverdie/OnlySports_filter', data_dir='CC-MAIN-2023-50', private=False, max_shard_size="4096MB", token=access_token)
