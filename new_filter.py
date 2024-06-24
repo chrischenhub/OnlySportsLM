@@ -40,8 +40,8 @@ from pyarrow import Table
 import gc
 from datasets import load_dataset, Dataset, DatasetDict,concatenate_datasets
 
-input_directory = './downloads/test/data/CC-MAIN-2017-17/'
-output_directory = './downloads/test/data/CC-MAIN-2017-17-filtered/'
+input_directory = './downloads/test/data/CC-MAIN-2014-23/'
+output_directory = './downloads/test/data/CC-MAIN-2014-23-filtered/'
 
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)
@@ -77,7 +77,7 @@ def process_and_filter_files():
     concatenated_dataset = concatenate_datasets(all_filtered_datasets)
     #concatenated_dataset.to_parquet(final_output_file)
     #concatenated_dataset.push_to_hub(repo_id='repo_id', dataset_name=dataset_name)
-    concatenated_dataset.push_to_hub("Chrisneverdie/OnlySports", data_dir='C-MAIN-2017-17_fixed', private=False, max_shard_size="4096MB", token=access_token)
+    concatenated_dataset.push_to_hub("Chrisneverdie/OnlySports", data_dir='CC-MAIN-2014-23_fixed', private=False, max_shard_size="4096MB", token=access_token)
 
 process_and_filter_files()
 
