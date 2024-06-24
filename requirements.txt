@@ -3,6 +3,6 @@ transformers
 datasets
 openai
 huggingface_hub[hf_transfer]
-accelerate -U
+accelerate
 evaluate
 scikit-learn
