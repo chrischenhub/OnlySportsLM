@@ -2,3 +2,7 @@ pandas
 transformers
 datasets
 openai
+huggingface_hub[hf_transfer]
+accelerate
+evaluate
+scikit-learn

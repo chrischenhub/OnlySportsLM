@@ -16,6 +16,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.metrics import classification_report, confusion_matrix
 import evaluate
 import numpy as np
+log_file_path = 'performance_log.txt'
 
 def compute_metrics(eval_pred):
     precision_metric = evaluate.load("precision")
@@ -42,6 +43,15 @@ def compute_metrics(eval_pred):
     cm = confusion_matrix(labels, preds)
     print("Validation Report:\n" + report)
     print("Confusion Matrix:\n" + str(cm))
+
+    with open(log_file_path, 'a') as log_file:
+        log_file.write(report)
+        log_file.write(str(cm))
+
+        log_file.write("precision" + str(precision))
+        log_file.write("recall" + str(recall))
+        log_file.write("f1" + str(f1))
+        log_file.write("accuracy" + str(accuracy))
 
     return {
         "precision": precision,
@@ -88,14 +98,14 @@ def main(args):
 
     training_args = TrainingArguments(
         output_dir=args.checkpoint_dir,
-        evaluation_strategy="steps",
+        eval_strategy="steps",
         save_strategy="steps",
         eval_steps=200,
         save_steps=200,
         logging_steps=100,
         learning_rate=3e-4,
-        num_train_epochs=20,
-        seed=0,
+        num_train_epochs=10,
+        seed=8,
         per_device_train_batch_size=256,
         per_device_eval_batch_size=128,
         load_best_model_at_end=True,
