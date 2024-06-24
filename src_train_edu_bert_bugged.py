@@ -51,7 +51,7 @@ def compute_metrics(eval_pred):
         log_file.write("precision" + str(precision))
         log_file.write("recall" + str(recall))
         log_file.write("f1" + str(f1))
-        log_file.write("accuracy" + str(accuracy)
+        log_file.write("accuracy" + str(accuracy))
 
     return {
         "precision": precision,
