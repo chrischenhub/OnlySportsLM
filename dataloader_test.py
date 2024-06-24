@@ -19,5 +19,5 @@ dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2024-10",
 
 
 dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
-dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords),num_proc=8)
+dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
 dataset.push_to_hub('Chrisneverdie/OnlySports', data_dir='CC-MAIN-2024-10', private=False, max_shard_size="4096MB", token=access_token)
