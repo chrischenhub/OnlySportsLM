@@ -30,4 +30,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
     parser.add_argument("-n", "--name", type=str, help="Target pattern in the hub")
     args = parser.parse_args()
-    process_data(args)
+    process_data(args.name)
