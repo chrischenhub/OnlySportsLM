@@ -15,7 +15,7 @@ HF_HUB_ENABLE_HF_TRANSFER=1
 cache_dir = "/root/.cache/huggingface"
 
 dataset = load_dataset("HuggingFaceFW/fineweb", "CC-MAIN-2024-10",
-            streaming=True, split="train", num_proc=8)
+            streaming=True, split="train")
 
 
 dataset = dataset.select_columns(['text', 'url', 'dump', 'token_count'])
