@@ -45,25 +45,54 @@ def load_processed_files(file_name):
 def filter_dataset(dataset, keywords):
     return dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
 
-def process_and_filter_files(full_paths, pattern, dir_name):
-    all_filtered_datasets = []
-    for full_path in full_paths:
-        if full_path.endswith(".parquet"):
-            try:
-                dataset = load_dataset('parquet', data_files=full_path, split='train', num_proc=8)
-                dataset = dataset.select_columns(['text', 'url', 'token_count'])
-                filtered_dataset = filter_dataset(dataset, keywords)
-                all_filtered_datasets.append(filtered_dataset)
-                os.remove(full_path)
-                gc.collect()
-            except Exception as e:
-                log_error(f"Error processing file {full_path}: {str(e)}")
-                continue
+from tqdm import tqdm
+import gc
 
+
+def process_file_paths(file_paths):
+    # 检查数组长度，确保至少有两个元素
+    if len(file_paths) < 2:
+        return "数组中文件路径数量不足"
+
+    # 获取首位和末尾的文件路径
+    first_path = file_paths[0]
+    last_path = file_paths[-1]
+
+    # 截取倒数第二部分
+    first_part = first_path.split('/')[-2]
+    last_part = last_path.split('/')[-2]
+
+    # 用 _to_ 链接
+    result = f"{first_part}_to_{last_part}"
+    return result
+
+
+def process_and_filter_files(full_paths, pattern):
+    all_filtered_datasets = []
+    # 创建一个进度条
+    with tqdm(total=len(full_paths), desc="Processing Files", unit="file") as pbar:
+        for full_path in full_paths:
+            if full_path.endswith(".parquet"):
+                try:
+                    dataset = load_dataset('parquet', data_files=full_path, split='train', num_proc=8)
+                    dataset = dataset.select_columns(['text', 'url', 'token_count'])
+                    filtered_dataset = filter_dataset(dataset, keywords)
+                    all_filtered_datasets.append(filtered_dataset)
+                    os.remove(full_path)
+                    gc.collect()
+                except Exception as e:
+                    log_error(f"Error processing file {full_path}: {str(e)}")
+                    continue
+
+                # 更新进度条
+                pbar.update(1)
+
+    dir_name = process_file_paths(full_paths)
     data_dir = pattern + "/" + dir_name + "_6.25_ver"
     try:
+        print("Process finished, start concatenating...")
         concatenated_dataset = concatenate_datasets(all_filtered_datasets)
-        concatenated_dataset.push_to_hub(upload_hub, data_dir=data_dir, private=False, max_shard_size="4096MB", token=access_token)
+        upload_dataset(concatenated_dataset, data_dir)
     except Exception as e:
         log_error(f"Error uploading dataset from {full_paths}: {str(e)}")
 
@@ -160,13 +189,15 @@ class DownloadAndFilterHandler:
 
         file_names = [f for f in os.listdir(pattern_path)]
         full_paths = [pattern_path + filename for filename in file_names]
+        full_paths = [path for path in full_paths if path not in self.uploaded_files]
+
 
         chunks = split_list_into_chunks(full_paths, self.chunk_size)
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             try:
                 print(f"Processing chunks for pattern {pattern}")
-                future_to_chunk = {executor.submit(process_and_filter_files, chunk, pattern, chunk[0] + "_to_" + chunk[-1]): chunk for chunk in chunks}
+                future_to_chunk = {executor.submit(process_and_filter_files, chunk, pattern): chunk for chunk in chunks}
 
 
 
