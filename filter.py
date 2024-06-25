@@ -152,15 +152,26 @@ class DownloadAndFilterHandler:
 
         file_names = [f for f in os.listdir(pattern_path)]
         full_paths = [pattern_path + filename for filename in file_names]
-        print(f"Full paths for pattern {pattern}: {full_paths}")
 
         chunks = split_list_into_chunks(full_paths, self.chunk_size)
-        print(f"File chunks for pattern {pattern}: {chunks}")
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             try:
                 print(f"Processing chunks for pattern {pattern}")
-                executor.map(process_and_filter_files, chunks, [pattern] * len(chunks))
+                future_to_chunk = {executor.submit(process_and_filter_files, chunk, pattern): chunk for chunk in chunks}
+
+                # Wait for all tasks to complete
+                concurrent.futures.wait(future_to_chunk.keys())
+
+                # Optionally, you can print the status of each task
+                for future in concurrent.futures.as_completed(future_to_chunk):
+                    chunk = future_to_chunk[future]
+                    try:
+                        future.result()  # This will raise an exception if the task failed
+                    except Exception as e:
+                        error_message = f"Error processing chunk {chunk} for pattern {pattern}: {str(e)}"
+                        print(error_message)
+                        log_error(error_message)
             except Exception as e:
                 error_message = f"Error processing chunks for pattern {pattern}: {str(e)}"
                 print(error_message)
@@ -168,6 +179,7 @@ class DownloadAndFilterHandler:
 
         self.uploaded_files = load_processed_files('upload.txt')
         remaining_paths = [path for path in full_paths if path not in self.uploaded_files]
+
 
         if remaining_paths:
             logging.info("Reprocessing remaining files: " + str(remaining_paths))
