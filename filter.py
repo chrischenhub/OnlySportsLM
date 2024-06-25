@@ -11,6 +11,7 @@ from huggingface_hub import snapshot_download
 import pyarrow.dataset as ds
 import pyarrow.parquet as pq
 import time
+import logging
 
 
 cache_dir = "/root/.cache/huggingface"
@@ -128,38 +129,54 @@ class DownloadAndFilterHandler:
         self.num_threads = num_proc
         self.chunk_size = chunk_size
 
+    import logging
+
     def download_filter(self, pattern):
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
+        logging.info(f"Starting download and filter process for pattern: {pattern}")
 
         if pattern in self.downloaded_files:
-            print(f"Pattern {pattern} already downloaded, skipping.")
+            logging.info(f"Pattern {pattern} already downloaded, skipping.")
         else:
             try:
-                download_dataset(pattern)
-                self.update_processed_files('download.txt', pattern)
+                logging.info(f"Attempting to download dataset for pattern {pattern}")
+                filepath = download_dataset(pattern)
+                if filepath:
+                    logging.info(f"Dataset downloaded successfully for pattern {pattern}")
+                    self.update_processed_files('download.txt', pattern)
+                else:
+                    logging.error(f"Failed to download dataset for pattern {pattern}")
             except Exception as e:
-                log_error(f"Error downloading dataset for pattern {pattern}: {str(e)}")
-                return
+                error_message = f"Error downloading dataset for pattern {pattern}: {str(e)}"
+                logging.error(error_message)
+                log_error(error_message)
 
         file_names = [f for f in os.listdir(pattern_path)]
         full_paths = [pattern_path + filename for filename in file_names]
-
-        print("full_paths: " + str(full_paths))
+        logging.info(f"Full paths for pattern {pattern}: {full_paths}")
 
         chunks = split_list_into_chunks(full_paths, self.chunk_size)
-
-        print("File Chunks: " + str(chunks))
+        logging.info(f"File chunks for pattern {pattern}: {chunks}")
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(process_and_filter_files, chunks, [pattern] * len(chunks))
+            try:
+                logging.info(f"Processing chunks for pattern {pattern}")
+                executor.map(process_and_filter_files, chunks, [pattern] * len(chunks))
+            except Exception as e:
+                error_message = f"Error processing chunks for pattern {pattern}: {str(e)}"
+                logging.error(error_message)
+                log_error(error_message)
 
         self.uploaded_files = load_processed_files('upload.txt')
-
         remaining_paths = [path for path in full_paths if path not in self.uploaded_files]
 
         if remaining_paths:
-            print("Reprocessing remaining files: " + str(remaining_paths))
+            logging.info("Reprocessing remaining files: " + str(remaining_paths))
             self.download_filter(pattern)
+        else:
+            logging.info(f"No remaining files to process for pattern {pattern}")
+
+        logging.info("Download and filter process for pattern completed.")
 
     def run(self):
         for pattern in self.patterns_list:
