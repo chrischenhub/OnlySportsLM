@@ -40,7 +40,7 @@ def load_processed_files(file_name):
 def filter_dataset(dataset, keywords):
     return dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords))
 
-def process_and_filter_files(full_paths, pattern, index):
+def process_and_filter_files(full_paths, pattern, dir_name):
     all_filtered_datasets = []
     for full_path in full_paths:
         if full_path.endswith(".parquet"):
@@ -55,7 +55,7 @@ def process_and_filter_files(full_paths, pattern, index):
                 log_error(f"Error processing file {full_path}: {str(e)}")
                 continue
 
-    data_dir = pattern + "/" + index + "6.25 ver"
+    data_dir = pattern + "/" + dir_name + "_6.25_ver"
     try:
         concatenated_dataset = concatenate_datasets(all_filtered_datasets)
         concatenated_dataset.push_to_hub(upload_hub, data_dir=data_dir, private=False, max_shard_size="4096MB", token=access_token)
@@ -158,7 +158,9 @@ class DownloadAndFilterHandler:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             try:
                 print(f"Processing chunks for pattern {pattern}")
-                future_to_chunk = {executor.submit(process_and_filter_files, chunk, pattern): chunk for chunk in chunks}
+                future_to_chunk = {executor.submit(process_and_filter_files, chunk, pattern, chunk[0] + "_to_" + chunk[-1]): chunk for chunk in chunks}
+
+
 
                 # Wait for all tasks to complete
                 concurrent.futures.wait(future_to_chunk.keys())
