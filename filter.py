@@ -23,13 +23,18 @@ max_disk_usage = 100 * 1024 * 1024 * 1024 * 10  # 1000GB
 allow_patterns_prefix = "data/"
 upload_folder = "test"
 default_patterns_list = "CC-MAIN-2023-40"
-upload_log = "uploaded.txt"
+upload_log_path = "uploaded.txt"
 
-def update_processed_files(file_name, file_path):
-    lock_file = f"{file_name}.lock"
+def update_processed_files(log_file_name, log_content_paths):
+    lock_file = f"{log_file_name}.lock"
     with FileLock(lock_file):
-        with open(file_name, 'a') as f:
-            f.write(file_path + '\n')
+        with open(log_file_name, 'a') as f:
+            if isinstance(log_content_paths, list):
+                for log_content_path in log_content_paths:
+                    f.write(log_content_path + '\n')
+            else:
+                f.write(log_content_paths + '\n')
+
 
 def load_processed_files(file_name):
     if os.path.exists(file_name):
@@ -62,8 +67,11 @@ def process_and_filter_files(full_paths, pattern, dir_name):
     except Exception as e:
         log_error(f"Error uploading dataset from {full_paths}: {str(e)}")
 
-    for full_path in full_paths:
-        update_processed_files(full_path, upload_log)
+    try:
+        update_processed_files(upload_log_path, full_paths)
+    except Exception as e:
+        log_error("log {} upload failed".format(full_paths))
+
 
 def download_dataset(allow_patterns):
     try:
