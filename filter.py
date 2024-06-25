@@ -133,38 +133,37 @@ class DownloadAndFilterHandler:
 
     def download_filter(self, pattern):
         pattern_path = local_download_dir + allow_patterns_prefix + pattern + "/"
-        logging.info(f"Starting download and filter process for pattern: {pattern}")
+        print(f"Starting download and filter process for pattern: {pattern}")
 
         if pattern in self.downloaded_files:
-            logging.info(f"Pattern {pattern} already downloaded, skipping.")
+            print(f"Pattern {pattern} already downloaded, skipping.")
         else:
             try:
-                logging.info(f"Attempting to download dataset for pattern {pattern}")
+                print(f"Attempting to download dataset for pattern {pattern}")
                 filepath = download_dataset(pattern)
                 if filepath:
-                    logging.info(f"Dataset downloaded successfully for pattern {pattern}")
+                    print(f"Dataset downloaded successfully for pattern {pattern}")
                     update_processed_files('download.txt', pattern)
                 else:
-                    logging.error(f"Failed to download dataset for pattern {pattern}")
+                    print(f"Failed to download dataset for pattern {pattern}")
             except Exception as e:
                 error_message = f"Error downloading dataset for pattern {pattern}: {str(e)}"
-                logging.error(error_message)
                 log_error(error_message)
 
         file_names = [f for f in os.listdir(pattern_path)]
         full_paths = [pattern_path + filename for filename in file_names]
-        logging.info(f"Full paths for pattern {pattern}: {full_paths}")
+        print(f"Full paths for pattern {pattern}: {full_paths}")
 
         chunks = split_list_into_chunks(full_paths, self.chunk_size)
-        logging.info(f"File chunks for pattern {pattern}: {chunks}")
+        print(f"File chunks for pattern {pattern}: {chunks}")
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             try:
-                logging.info(f"Processing chunks for pattern {pattern}")
+                print(f"Processing chunks for pattern {pattern}")
                 executor.map(process_and_filter_files, chunks, [pattern] * len(chunks))
             except Exception as e:
                 error_message = f"Error processing chunks for pattern {pattern}: {str(e)}"
-                logging.error(error_message)
+                print(error_message)
                 log_error(error_message)
 
         self.uploaded_files = load_processed_files('upload.txt')
