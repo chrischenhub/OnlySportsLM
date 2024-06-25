@@ -143,7 +143,7 @@ class DownloadAndFilterHandler:
                 filepath = download_dataset(pattern)
                 if filepath:
                     logging.info(f"Dataset downloaded successfully for pattern {pattern}")
-                    self.update_processed_files('download.txt', pattern)
+                    update_processed_files('download.txt', pattern)
                 else:
                     logging.error(f"Failed to download dataset for pattern {pattern}")
             except Exception as e:
