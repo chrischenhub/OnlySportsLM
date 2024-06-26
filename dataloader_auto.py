@@ -15,7 +15,7 @@ import subprocess
 
 access_token = "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"
 RETRY_LIMIT = 5  # 设置重试次数
-DOWNLOAD_TIMEOUT = 60  # 设置下载超时时间（秒）
+DOWNLOAD_TIMEOUT = 480  # 设置下载超时时间（秒）
 cache_dir = '/root/.cache/huggingface/'
 
 # 禁用缓存
