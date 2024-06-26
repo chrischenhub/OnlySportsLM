@@ -16,7 +16,6 @@ DOWNLOAD_TIMEOUT = 60  # 设置下载超时时间（秒）
 cache_dir = '/root/.cache/huggingface/'
 
 # 禁用缓存
-disable_caching()
 
 def get_dir_size(dir_path):
     total_size = 0
