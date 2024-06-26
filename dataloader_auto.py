@@ -14,19 +14,32 @@ import subprocess
 
 
 access_token = "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"
-RETRY_LIMIT = 5  # 设置重试次数
-DOWNLOAD_TIMEOUT = 60  # 设置下载超时时间（秒）
+RETRY_LIMIT = 8  # 设置重试次数
+DOWNLOAD_TIMEOUT = 600  # 设置下载超时时间（秒）
 cache_dir = '/root/.cache/huggingface/'
+uploaded_patterns_file = "dataloader_uploaded.txt"
+
 
 # 禁用缓存
 disable_caching()
 
+
+
+def load_uploaded_patterns():
+    if os.path.exists(uploaded_patterns_file):
+        with open(uploaded_patterns_file, 'r') as f:
+            return set(line.strip() for line in f if line.strip())
+    return set()
+
+
+def save_uploaded_pattern(pattern):
+    with open(uploaded_patterns_file, 'a') as f:
+        f.write(pattern + '\n')
+
+import shutil
+
 def get_dir_size(dir_path):
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(dir_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            total_size += os.path.getsize(fp)
+    total_size = shutil.disk_usage(dir_path).used
     return total_size
 
 def monitor_cache_dir(stop_event, size_change_event):
@@ -72,7 +85,7 @@ def load_dataset_with_retry(name):
             return dataset  # 加载成功，返回数据集
         except Exception as e:
             retry_count += 1
-            wait_time = 5 * 2 ** (retry_count - 1)  # 计算等待时间
+            wait_time = 5  # 等待时间
             print(f"Failed to load dataset, retrying after {wait_time} seconds... (Attempt {retry_count}/{RETRY_LIMIT}). Error: {str(e)}")
             time.sleep(wait_time)  # 等待指定时间后重试
 
@@ -84,6 +97,11 @@ def load_dataset_with_retry(name):
                 return None  # 加载失败，返回None
 
 def process_data(name):
+    uploaded_patterns = load_uploaded_patterns()
+    if name in uploaded_patterns:
+        print(f"Pattern {name} has already been processed. Skipping.")
+        return
+
     dataset = load_dataset_with_retry(name)
     if dataset is None:
         return  # 如果加载失败，则退出当前函数
@@ -112,6 +130,7 @@ def process_data(name):
                 print(error_message)
 
     print('done')
+    save_uploaded_pattern(name)  # 更新已处理的 pattern
 
 def clear_cache():
     # 清除缓存的代码
