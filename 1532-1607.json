@@ -1,10 +1,9 @@
 {
     "patterns": [
-
         "CC-MAIN-2015-32",
         "CC-MAIN-2015-35",
         "CC-MAIN-2015-40",
         "CC-MAIN-2015-48",
-        "CC-MAIN-2016-07",
+        "CC-MAIN-2016-07"
     ]
 }
