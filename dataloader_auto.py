@@ -171,6 +171,7 @@ if __name__ == "__main__":
             except Exception as e:
                 update_task_status(task, 0)  # 0 for uncompleted
     else:
+        print("Getting patterns from local server...")
         if args.json:
             with open(args.json, 'r') as f:
                 data = json.load(f)
