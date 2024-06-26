@@ -9,6 +9,9 @@ from main import allow_patterns_prefix, default_patterns_list, download_dataset,
 from DataGenerator import keywords
 from datasets import load_dataset, disable_caching
 from filelock import FileLock
+import subprocess
+
+
 
 access_token = "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"
 RETRY_LIMIT = 5  # 设置重试次数
@@ -115,6 +118,10 @@ def clear_cache():
     os.system('rm -rf ' + cache_dir + '*')
 
 if __name__ == "__main__":
+    # 环境变量增加下载速度
+    command = "export HF_HUB_ENABLE_HF_TRANSFER=1"
+    subprocess.run(command, shell=True, check=True)
+
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
     parser.add_argument("-j", "--json", type=str, help="Path to the JSON file containing patterns")
     args = parser.parse_args()
