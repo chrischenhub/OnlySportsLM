@@ -10,79 +10,27 @@ from DataGenerator import keywords
 from datasets import load_dataset, disable_caching
 from filelock import FileLock
 import subprocess
+import os
 
+# 假设当前路径下存在文件 dataloader_uploaded.txt
+uploaded_patterns_file = "dataloader_uploaded.txt"
 
+def load_uploaded_patterns():
+    if os.path.exists(uploaded_patterns_file):
+        with open(uploaded_patterns_file, 'r') as f:
+            return set(line.strip() for line in f if line.strip())
+    return set()
 
-access_token = "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"
-RETRY_LIMIT = 5  # 设置重试次数
-DOWNLOAD_TIMEOUT = 300  # 设置下载超时时间（秒）
-cache_dir = '/root/.cache/huggingface/'
-
-# 禁用缓存
-
-def get_dir_size(dir_path):
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(dir_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            total_size += os.path.getsize(fp)
-    return total_size
-
-def monitor_cache_dir(stop_event, size_change_event):
-    initial_size = get_dir_size(cache_dir)
-    while not stop_event.is_set():
-        time.sleep(5)  # 每5秒检查一次
-        current_size = get_dir_size(cache_dir)
-        if current_size != initial_size:
-            initial_size = current_size
-            size_change_event.set()  # 大小改变，触发事件
-        else:
-            size_change_event.clear()  # 大小未改变，清除事件
-
-def load_dataset_with_retry(name):
-    retry_count = 0
-    while retry_count < RETRY_LIMIT:
-        try:
-            stop_event = threading.Event()
-            size_change_event = threading.Event()
-
-            # 启动监控线程
-            monitor_thread = threading.Thread(target=monitor_cache_dir, args=(stop_event, size_change_event))
-            monitor_thread.start()
-
-            def dataset_loader():
-                return load_dataset("HuggingFaceFW/fineweb", name, split="train", num_proc=8)
-
-            # 创建一个线程来加载数据集
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(dataset_loader)
-                start_time = time.time()
-                while True:
-                    if future.done():
-                        dataset = future.result()
-                        break
-                    if time.time() - start_time > DOWNLOAD_TIMEOUT and not size_change_event.is_set():
-                        raise TimeoutError("Dataset loading stuck for 60 seconds without any disk usage change.")
-                    time.sleep(1)
-
-            stop_event.set()  # 停止监控线程
-            monitor_thread.join()
-
-            return dataset  # 加载成功，返回数据集
-        except Exception as e:
-            retry_count += 1
-            wait_time = 5 * 2 ** (retry_count - 1)  # 计算等待时间
-            print(f"Failed to load dataset, retrying after {wait_time} seconds... (Attempt {retry_count}/{RETRY_LIMIT}). Error: {str(e)}")
-            time.sleep(wait_time)  # 等待指定时间后重试
-
-            if retry_count >= RETRY_LIMIT:
-                error_message = f"Failed to load dataset after {RETRY_LIMIT} retries. Error: {str(e)}"
-                with open("load_error.txt", "a") as file:
-                    file.write(error_message + "\n")
-                print(error_message)
-                return None  # 加载失败，返回None
+def save_uploaded_pattern(pattern):
+    with open(uploaded_patterns_file, 'a') as f:
+        f.write(pattern + '\n')
 
 def process_data(name):
+    uploaded_patterns = load_uploaded_patterns()
+    if name in uploaded_patterns:
+        print(f"Pattern {name} has already been processed. Skipping.")
+        return
+
     dataset = load_dataset_with_retry(name)
     if dataset is None:
         return  # 如果加载失败，则退出当前函数
@@ -111,10 +59,7 @@ def process_data(name):
                 print(error_message)
 
     print('done')
-
-def clear_cache():
-    # 清除缓存的代码
-    os.system('rm -rf ' + cache_dir + '*')
+    save_uploaded_pattern(name)  # 更新已处理的 pattern
 
 if __name__ == "__main__":
     # 环境变量增加下载速度
