@@ -36,15 +36,11 @@ def save_uploaded_pattern(pattern):
     with open(uploaded_patterns_file, 'a') as f:
         f.write(pattern + '\n')
 
+import shutil
 
 def get_dir_size(dir_path):
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(dir_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            total_size += os.path.getsize(fp)
+    total_size = shutil.disk_usage(dir_path).used
     return total_size
-
 
 def monitor_cache_dir(stop_event, size_change_event):
     initial_size = get_dir_size(cache_dir)
