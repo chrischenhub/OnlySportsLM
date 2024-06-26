@@ -70,7 +70,7 @@ def load_dataset_with_retry(name):
         except Exception as e:
             retry_count += 1
             wait_time = 5 * 2 ** (retry_count - 1)  # 计算等待时间
-            print(f"Failed to load dataset, retrying after {wait_time} seconds... (Attempt {retry_count}/{RETRY_LIMIT})")
+            print(f"Failed to load dataset, retrying after {wait_time} seconds... (Attempt {retry_count}/{RETRY_LIMIT}). Error: {str(e)}")
             time.sleep(wait_time)  # 等待指定时间后重试
 
             if retry_count >= RETRY_LIMIT:
@@ -99,7 +99,7 @@ def process_data(name):
         except Exception as e:
             retry_count += 1
             wait_time = 5 * 2 ** (retry_count - 1)  # 计算等待时间
-            print(f"Upload failed, retrying after {wait_time} seconds... (Attempt {retry_count}/{RETRY_LIMIT})")
+            print(f"Upload failed, retrying after {wait_time} seconds... (Attempt {retry_count}/{RETRY_LIMIT})Error: {str(e)}")
             time.sleep(wait_time)  # 等待指定时间后重试
 
             if retry_count >= RETRY_LIMIT:
