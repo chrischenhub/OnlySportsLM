@@ -15,7 +15,7 @@ import subprocess
 
 access_token = "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"
 RETRY_LIMIT = 8  # 设置重试次数
-DOWNLOAD_TIMEOUT = 300  # 设置下载超时时间（秒）
+DOWNLOAD_TIMEOUT = 600  # 设置下载超时时间（秒）
 cache_dir = '/root/.cache/huggingface/'
 uploaded_patterns_file = "dataloader_uploaded.txt"
 
