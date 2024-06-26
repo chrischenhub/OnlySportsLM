@@ -132,7 +132,7 @@ def clear_cache():
     os.system('rm -rf ' + cache_dir + '*')
 
 def get_task_from_server():
-    url = f"http://{coordinator_ip}:80/getTask"
+    url = f"http://{coordinator_ip}/getTask"
     response = requests.post(url)
     if response.status_code == 200:
         data = response.json()
@@ -141,7 +141,7 @@ def get_task_from_server():
     return None
 
 def update_task_status(task, status):
-    url = f"http://{coordinator_ip}:80/updateTask"
+    url = f"http://{coordinator_ip}/updateTask"
     payload = {"task": task, "status": status}
     response = requests.post(url, json=payload)
     if response.status_code != 200:
