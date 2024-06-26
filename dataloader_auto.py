@@ -43,7 +43,7 @@ def process_data(name):
 
 def clear_cache():
     # 清除缓存的代码
-    os.system('rm -rf /root/.cache/*')
+    os.system('rm -rf /root/.cache/huggingface/*')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
