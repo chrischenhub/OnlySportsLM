@@ -12,7 +12,7 @@ from datasets import load_dataset, disable_caching
 from filelock import FileLock
 import subprocess
 
-coordinator_ip = "http://120.26.210.154"
+coordinator_ip = "120.26.210.154"
 access_token = "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"
 RETRY_LIMIT = 8  # 设置重试次数
 DOWNLOAD_TIMEOUT = 300  # 设置下载超时时间（秒）
@@ -159,6 +159,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.remote:
+        print("Getting patterns from remote server...")
         while True:
             task = get_task_from_server()
             if task is None:
