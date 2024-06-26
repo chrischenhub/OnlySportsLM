@@ -12,7 +12,7 @@ from datasets import load_dataset, disable_caching
 from filelock import FileLock
 import subprocess
 
-coordinator_ip = "120.26.210.154"
+coordinator_ip = "http://120.26.210.154"
 access_token = "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"
 RETRY_LIMIT = 8  # 设置重试次数
 DOWNLOAD_TIMEOUT = 300  # 设置下载超时时间（秒）

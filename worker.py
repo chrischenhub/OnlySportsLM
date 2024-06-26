@@ -2,7 +2,7 @@ import requests
 import json
 
 # 定义服务器的URL
-SERVER_URL = "http://localhost"
+SERVER_URL = "http://120.26.210.154"
 
 def get_task():
     # 发送获取任务的请求
