@@ -50,8 +50,8 @@ if __name__ == "__main__":
     parser.add_argument("-j", "--json", type=str, help="Path to the JSON file containing patterns")
     args = parser.parse_args()
 
-    if args.file:
-        with open(args.file, 'j') as f:
+    if args.json: 
+        with open(args.json, 'r') as f: 
             data = json.load(f)
             patterns = data.get("patterns", [])
 
@@ -60,3 +60,4 @@ if __name__ == "__main__":
                 clear_cache()  # 在处理每个模式后清除缓存
     else:
         print("Please provide a JSON file containing the patterns.")
+
