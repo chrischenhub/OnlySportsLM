@@ -137,7 +137,10 @@ def get_task_from_server():
     if response.status_code == 200:
         data = response.json()
         if "task" in data:
+            print("Received task:", data['task'])
             return data["task"]
+    else:
+        print("Failed to get task:", response.text)
     return None
 
 def update_task_status(task, status):
@@ -146,6 +149,8 @@ def update_task_status(task, status):
     response = requests.post(url, json=payload)
     if response.status_code != 200:
         print("Failed to update task status")
+    else:
+        print("Updated task status")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
