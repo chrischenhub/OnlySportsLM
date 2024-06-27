@@ -19,8 +19,6 @@ cache_dir = '/root/.cache/huggingface/'
 uploaded_patterns_file = "dataloader_uploaded.txt"
 
 # 禁用缓存
-disable_caching()
-
 
 def load_uploaded_patterns():
     if os.path.exists(uploaded_patterns_file):
