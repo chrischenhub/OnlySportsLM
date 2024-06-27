@@ -3,14 +3,13 @@ import requests
 import threading
 import json
 import time
-import psutil
 import os
 import concurrent.futures
-from main import allow_patterns_prefix, default_patterns_list, download_dataset, upload_dataset, delete_dataset, local_download_dir
 from DataGenerator import keywords
 from datasets import load_dataset, disable_caching
-from filelock import FileLock
-import subprocess
+import sys
+import signal
+import shutil
 
 coordinator_ip = "120.26.210.154"
 access_token = "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"
@@ -21,6 +20,7 @@ uploaded_patterns_file = "dataloader_uploaded.txt"
 
 # 禁用缓存
 disable_caching()
+
 
 def load_uploaded_patterns():
     if os.path.exists(uploaded_patterns_file):
@@ -33,13 +33,8 @@ def save_uploaded_pattern(pattern):
         f.write(pattern + '\n')
 
 def get_dir_size(dir_path):
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(dir_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            total_size += os.path.getsize(fp)
+    total_size = shutil.disk_usage(dir_path).used
     return total_size
-
 def monitor_cache_dir(stop_event, size_change_event):
     initial_size = get_dir_size(cache_dir)
     while not stop_event.is_set():
@@ -151,6 +146,26 @@ def update_task_status(task, status):
         print("Failed to update task status")
     else:
         print("Updated task status")
+
+def witdrwa_task():
+    url = f"http://{coordinator_ip}/updateTask"
+    response = requests.post(url)
+    if response.status_code == 200:
+        print("Tasks Withdrawn")
+
+    else:
+        print("Failed to Withdrawn tasks, Error: ", response.text)
+def signal_handler(sig, frame):
+    print("Received termination signal. Cleaning up...")
+
+    witdrwa_task()
+    print("Cleanup complete. Exiting...")
+    sys.exit(0)
+
+# 设置信号处理函数
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
