@@ -161,6 +161,8 @@ if __name__ == "__main__":
                 break
             try:
                 print("got task:" + task)
+                time.sleep(10)
+                print("finished task:" + task)
                 update_task_status(task, 2)  # 2 for completed
             except Exception as e:
                 update_task_status(task, 0)  # 0 for uncompleted
