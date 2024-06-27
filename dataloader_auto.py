@@ -11,6 +11,13 @@ import sys
 import signal
 import shutil
 import uuid
+import hmac
+import hashlib
+import base64
+import time
+
+
+
 
 coordinator_ip = "120.26.210.154"
 access_token = "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"
@@ -19,7 +26,7 @@ DOWNLOAD_TIMEOUT = 600  # 设置下载超时时间（秒）
 cache_dir = '/root/.cache/huggingface/'
 uploaded_patterns_file = "dataloader_uploaded.txt"
 
-machine_id = uuid.uuid4()
+machine_id = uuid.uuid4().hex
 
 # 禁用缓存
 disable_caching()
@@ -144,7 +151,7 @@ def get_task_from_server():
     return None
 
 def complete_task(task):
-    url = f"http://{coordinator_ip}/updateTask"
+    url = f"http://{coordinator_ip}/completeTask"
     payload = {"task": task, "worker_name": machine_id}
     response = requests.post(url, json=payload)
     if response.status_code != 200:
@@ -153,11 +160,11 @@ def complete_task(task):
         print("Updated task status")
 
 def withdraw_task():
-    url = f"http://{coordinator_ip}/updateTask"
-    response = requests.post(url)
+    url = f"http://{coordinator_ip}/withdrawTask"
+    payload = {"worker_name": machine_id}
+    response = requests.post(url, json=payload)
     if response.status_code == 200:
         print("Tasks Withdrawn")
-
     else:
         print("Failed to Withdrawn tasks, Error: ", response.text)
 def signal_handler(sig, frame):
