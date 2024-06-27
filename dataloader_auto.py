@@ -50,28 +50,29 @@ def load_dataset_with_retry(name):
     retry_count = 0
     while retry_count < RETRY_LIMIT:
         try:
-            stop_event = threading.Event()
-            size_change_event = threading.Event()
-            monitor_thread = threading.Thread(target=monitor_cache_dir, args=(stop_event, size_change_event))
-            monitor_thread.start()
+            # stop_event = threading.Event()
+            # size_change_event = threading.Event()
+            # monitor_thread = threading.Thread(target=monitor_cache_dir, args=(stop_event, size_change_event))
+            # monitor_thread.start()
+            #
+            # def dataset_loader():
+            #     return load_dataset("HuggingFaceFW/fineweb", name, split="train", num_proc=8)
+            #
+            # with concurrent.futures.ThreadPoolExecutor() as executor:
+            #     future = executor.submit(dataset_loader)
+            #     start_time = time.time()
+            #     while True:
+            #         if future.done():
+            #             dataset = future.result()
+            #             break
+            #         if time.time() - start_time > DOWNLOAD_TIMEOUT and not size_change_event.is_set():
+            #             raise TimeoutError("Dataset loading stuck for 60 seconds without any disk usage change.")
+            #         time.sleep(1)
+            #
+            # stop_event.set()
+            # monitor_thread.join()
 
-            def dataset_loader():
-                return load_dataset("HuggingFaceFW/fineweb", name, split="train", num_proc=8)
-
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(dataset_loader)
-                start_time = time.time()
-                while True:
-                    if future.done():
-                        dataset = future.result()
-                        break
-                    if time.time() - start_time > DOWNLOAD_TIMEOUT and not size_change_event.is_set():
-                        raise TimeoutError("Dataset loading stuck for 60 seconds without any disk usage change.")
-                    time.sleep(1)
-
-            stop_event.set()
-            monitor_thread.join()
-
+            return load_dataset("HuggingFaceFW/fineweb", name, split="train", num_proc=8)
             return dataset
         except Exception as e:
             retry_count += 1
