@@ -10,6 +10,7 @@ from datasets import load_dataset, disable_caching
 import sys
 import signal
 import shutil
+import uuid
 
 coordinator_ip = "120.26.210.154"
 access_token = "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"
@@ -17,6 +18,8 @@ RETRY_LIMIT = 8  # 设置重试次数
 DOWNLOAD_TIMEOUT = 600  # 设置下载超时时间（秒）
 cache_dir = '/root/.cache/huggingface/'
 uploaded_patterns_file = "dataloader_uploaded.txt"
+
+machine_id = uuid.uuid4()
 
 # 禁用缓存
 disable_caching()
@@ -129,7 +132,8 @@ def clear_cache():
 
 def get_task_from_server():
     url = f"http://{coordinator_ip}/getTask"
-    response = requests.post(url)
+    payload = {"worker_name": machine_id}
+    response = requests.post(url, json=payload)
     if response.status_code == 200:
         data = response.json()
         if "task" in data:
@@ -139,16 +143,16 @@ def get_task_from_server():
         print("Failed to get task:", response.text)
     return None
 
-def update_task_status(task, status):
+def complete_task(task):
     url = f"http://{coordinator_ip}/updateTask"
-    payload = {"task": task, "status": status}
+    payload = {"task": task, "worker_name": machine_id}
     response = requests.post(url, json=payload)
     if response.status_code != 200:
         print("Failed to update task status")
     else:
         print("Updated task status")
 
-def witdrwa_task():
+def withdraw_task():
     url = f"http://{coordinator_ip}/updateTask"
     response = requests.post(url)
     if response.status_code == 200:
@@ -159,7 +163,7 @@ def witdrwa_task():
 def signal_handler(sig, frame):
     print("Received termination signal. Cleaning up...")
 
-    witdrwa_task()
+    withdraw_task()
     print("Cleanup complete. Exiting...")
     sys.exit(0)
 
@@ -183,9 +187,9 @@ if __name__ == "__main__":
                 break
             try:
                 process_data(task)
-                update_task_status(task, 2)  # 2 for completed
+                complete_task(task)
             except Exception as e:
-                update_task_status(task, 0)  # 0 for uncompleted
+                withdraw_task()
     else:
         print("Getting patterns from local server...")
         if args.json:
