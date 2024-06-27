@@ -11,6 +11,8 @@ from DataGenerator import keywords
 from datasets import load_dataset, disable_caching
 from filelock import FileLock
 import subprocess
+import sys
+import signal
 
 coordinator_ip = "120.26.210.154"
 access_token = "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"
@@ -146,6 +148,27 @@ def update_task_status(task, status):
     response = requests.post(url, json=payload)
     if response.status_code != 200:
         print("Failed to update task status")
+
+
+def witdrwa_task():
+    url = f"http://{coordinator_ip}/updateTask"
+    response = requests.post(url)
+    if response.status_code == 200:
+        print("Tasks Withdrawn")
+
+    else:
+        print("Failed to Withdrawn tasks, Error: ", response.text)
+def signal_handler(sig, frame):
+    print("Received termination signal. Cleaning up...")
+
+    witdrwa_task()
+    print("Cleanup complete. Exiting...")
+    sys.exit(0)
+
+# 设置信号处理函数
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
