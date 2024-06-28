@@ -10,6 +10,14 @@ from datasets import load_dataset, disable_caching
 import sys
 import signal
 import shutil
+import uuid
+import hmac
+import hashlib
+import base64
+import time
+
+
+
 
 coordinator_ip = "120.26.210.154"
 access_token = "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"
@@ -17,6 +25,8 @@ RETRY_LIMIT = 8  # 设置重试次数
 DOWNLOAD_TIMEOUT = 600  # 设置下载超时时间（秒）
 cache_dir = '/root/.cache/huggingface/'
 uploaded_patterns_file = "dataloader_uploaded.txt"
+
+machine_id = uuid.uuid4().hex
 
 # 禁用缓存
 
@@ -48,28 +58,29 @@ def load_dataset_with_retry(name):
     retry_count = 0
     while retry_count < RETRY_LIMIT:
         try:
-            stop_event = threading.Event()
-            size_change_event = threading.Event()
-            monitor_thread = threading.Thread(target=monitor_cache_dir, args=(stop_event, size_change_event))
-            monitor_thread.start()
+            # stop_event = threading.Event()
+            # size_change_event = threading.Event()
+            # monitor_thread = threading.Thread(target=monitor_cache_dir, args=(stop_event, size_change_event))
+            # monitor_thread.start()
+            #
+            # def dataset_loader():
+            #     return load_dataset("HuggingFaceFW/fineweb", name, split="train", num_proc=8)
+            #
+            # with concurrent.futures.ThreadPoolExecutor() as executor:
+            #     future = executor.submit(dataset_loader)
+            #     start_time = time.time()
+            #     while True:
+            #         if future.done():
+            #             dataset = future.result()
+            #             break
+            #         if time.time() - start_time > DOWNLOAD_TIMEOUT and not size_change_event.is_set():
+            #             raise TimeoutError("Dataset loading stuck for 60 seconds without any disk usage change.")
+            #         time.sleep(1)
+            #
+            # stop_event.set()
+            # monitor_thread.join()
 
-            def dataset_loader():
-                return load_dataset("HuggingFaceFW/fineweb", name, split="train", num_proc=8)
-
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(dataset_loader)
-                start_time = time.time()
-                while True:
-                    if future.done():
-                        dataset = future.result()
-                        break
-                    if time.time() - start_time > DOWNLOAD_TIMEOUT and not size_change_event.is_set():
-                        raise TimeoutError("Dataset loading stuck for 60 seconds without any disk usage change.")
-                    time.sleep(1)
-
-            stop_event.set()
-            monitor_thread.join()
-
+            return load_dataset("HuggingFaceFW/fineweb", name, split="train", num_proc=8)
             return dataset
         except Exception as e:
             retry_count += 1
@@ -126,7 +137,8 @@ def clear_cache():
 
 def get_task_from_server():
     url = f"http://{coordinator_ip}/getTask"
-    response = requests.post(url)
+    payload = {"worker_name": machine_id}
+    response = requests.post(url, json=payload)
     if response.status_code == 200:
         data = response.json()
         if "task" in data:
@@ -136,27 +148,27 @@ def get_task_from_server():
         print("Failed to get task:", response.text)
     return None
 
-def update_task_status(task, status):
-    url = f"http://{coordinator_ip}/updateTask"
-    payload = {"task": task, "status": status}
+def complete_task(task):
+    url = f"http://{coordinator_ip}/completeTask"
+    payload = {"task": task, "worker_name": machine_id}
     response = requests.post(url, json=payload)
     if response.status_code != 200:
         print("Failed to update task status")
     else:
         print("Updated task status")
 
-def witdrwa_task():
-    url = f"http://{coordinator_ip}/updateTask"
-    response = requests.post(url)
+def withdraw_task():
+    url = f"http://{coordinator_ip}/withdrawTask"
+    payload = {"worker_name": machine_id}
+    response = requests.post(url, json=payload)
     if response.status_code == 200:
         print("Tasks Withdrawn")
-
     else:
         print("Failed to Withdrawn tasks, Error: ", response.text)
 def signal_handler(sig, frame):
     print("Received termination signal. Cleaning up...")
 
-    witdrwa_task()
+    withdraw_task()
     print("Cleanup complete. Exiting...")
     sys.exit(0)
 
@@ -180,9 +192,9 @@ if __name__ == "__main__":
                 break
             try:
                 process_data(task)
-                update_task_status(task, 2)  # 2 for completed
+                complete_task(task)
             except Exception as e:
-                update_task_status(task, 0)  # 0 for uncompleted
+                withdraw_task()
     else:
         print("Getting patterns from local server...")
         if args.json:
