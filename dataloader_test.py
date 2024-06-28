@@ -24,8 +24,6 @@ def process_data(name):
     dataset = dataset.filter(lambda example: any(keyword in example["url"] for keyword in keywords),num_proc=8)
     print('Dataset filtered, uploading...')
     #dataset.push_to_hub('Chrisneverdie/OnlySports', data_dir=name, private=False, max_shard_size="4096MB", token=access_token)
-
-    print('done')
     retry_count = 0
     while retry_count < RETRY_LIMIT:
         try:
