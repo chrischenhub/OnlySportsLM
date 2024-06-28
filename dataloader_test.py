@@ -13,6 +13,7 @@ disable_caching()
 access_token = "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"
 
 #disable_caching()
+RETRY_LIMIT = 8  # 设置重试次数
 
 def process_data(name):
     dataset = load_dataset("HuggingFaceFW/fineweb", name,
@@ -25,7 +26,25 @@ def process_data(name):
     dataset.push_to_hub('Chrisneverdie/OnlySports', data_dir=name, private=False, max_shard_size="4096MB", token=access_token)
 
     print('done')
-    
+    retry_count = 0
+    while retry_count < RETRY_LIMIT:
+        try:
+            dataset.push_to_hub('Chrisneverdie/OnlySports', data_dir=name, private=False, max_shard_size="4096MB", token=access_token)
+            print('Upload successful')
+            break
+        except Exception as e:
+            retry_count += 1
+  
+
+            if retry_count >= RETRY_LIMIT:
+                error_message = f"Failed to upload dataset after {RETRY_LIMIT} retries. Error: {str(e)}"
+                with open("upload_error.txt", "a") as file:
+                    file.write(error_message + "\n")
+                print(error_message)
+
+    print('done')
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
     parser.add_argument("-n", "--name", type=str, help="Target pattern in the hub")
