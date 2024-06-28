@@ -94,4 +94,4 @@ if __name__ == "__main__":
     else:
         allow_patterns_list = [args.name]
 
-    process_data(allow_patterns_list)
+    loop(allow_patterns_list)
