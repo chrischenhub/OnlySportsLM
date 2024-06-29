@@ -58,7 +58,7 @@ def process_data(name):
     retry_count = 0
     while retry_count < RETRY_LIMIT:
         try:
-            dataset.push_to_hub('Chrisneverdie/OnlySports', data_dir=name, private=False, max_shard_size="4096MB", token=access_token)
+            dataset.push_to_hub('Chrisneverdie/OnlySports',config_name=name, data_dir=f'data/+{name}', private=False, max_shard_size="4096MB", token=access_token)
             print('Upload successful')
             break
         except Exception as e:
