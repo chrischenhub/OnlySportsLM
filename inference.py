@@ -71,14 +71,8 @@ def process_data(name):
     retry_count = 0
     while retry_count < RETRY_LIMIT:
         try:
-            #dataset = dataset.map(compute_scores, batched=True, batch_size=512)
-            dataset = dataset.map(compute_scores, batched=True, 
-                            num_proc=8, batch_size=512/8)
-            
-            dataset = dataset.map(add_prefix, batched=True, 
-                            num_proc=8, batch_size=512/8)
-            
-            #dataset = dataset.map(add_prefix)
+            dataset = dataset.map(compute_scores, batched=True, batch_size=512)
+            dataset = dataset.map(add_prefix)
             dataset = dataset.filter(lambda example: example["pred"]==1)
             dataset = dataset.select_columns(['text','url','token_count'])
             print('Dataset filtered')
