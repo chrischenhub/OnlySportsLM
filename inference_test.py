@@ -41,7 +41,7 @@ model.to(device)
 def compute_scores(batch):
     inputs = tokenizer(batch['text'], return_tensors="pt", padding="longest", truncation=True).to(device)
     with torch.no_grad():
-        outputs = model(**inputs).logits.argmax().item()
+        outputs = model(**inputs).logits.argmax(dim=-1).cpu().numpy()
 
     batch["pred"] =  outputs
     return batch
@@ -49,8 +49,8 @@ def compute_scores(batch):
 dataset = load_dataset('Chrisneverdie/sports-annotation',data_files={'train': 'train.parquet'})
 dataset = dataset.map(compute_scores, batched=True, batch_size=512)
 #dataset = dataset.map(add_prefix)
-dataset = dataset.filter(lambda example: example["pred"]==1)
+dataset = dataset.filter(lambda example: example["pred"][0]==1)
 dataset = dataset.select_columns(['text','url','token_count'])
 print('Dataset filtered')
 
-dataset.push_to_hub('Chrisneverdie/OnlySports_clean', config_name=name, data_dir=f'data/test', private=False, max_shard_size="4096MB",token=access_token)
+dataset.push_to_hub('Chrisneverdie/OnlySports_clean', config_name='test', data_dir=f'data/test', private=False, max_shard_size="4096MB",token=access_token)
