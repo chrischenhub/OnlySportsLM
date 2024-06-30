@@ -34,18 +34,28 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 
+# def compute_scores(batch):
+#     inputs = tokenizer(batch['text'], return_tensors="pt", padding="longest", truncation=True).to(device)
+#     with torch.no_grad():
+#         outputs = model(**inputs)
+#         logits = outputs.logits.squeeze(-1).float().cpu().numpy()
+
+#     batch["score"] =  logits.tolist()
+#     return batch
+
+# def add_prefix(example):
+#     example['pred'] = np.argmax(example['score'])
+#     return example
+
+
+
 def compute_scores(batch):
     inputs = tokenizer(batch['text'], return_tensors="pt", padding="longest", truncation=True).to(device)
     with torch.no_grad():
-        outputs = model(**inputs)
-        logits = outputs.logits.squeeze(-1).float().cpu().numpy()
+        outputs = model(**inputs).logits.argmax().item()
 
-    batch["score"] =  logits.tolist()
+    batch["score"] =  outputs
     return batch
-
-def add_prefix(example):
-    example['pred'] = np.argmax(example['score'])
-    return example
 
 
 def process_data(name):
@@ -72,7 +82,7 @@ def process_data(name):
     while retry_count < RETRY_LIMIT:
         try:
             dataset = dataset.map(compute_scores, batched=True, batch_size=512)
-            dataset = dataset.map(add_prefix)
+            #dataset = dataset.map(add_prefix)
             dataset = dataset.filter(lambda example: example["pred"]==1)
             dataset = dataset.select_columns(['text','url','token_count'])
             print('Dataset filtered')
