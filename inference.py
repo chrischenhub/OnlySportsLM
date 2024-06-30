@@ -80,7 +80,7 @@ def process_data(name):
     while retry_count < RETRY_LIMIT:
         try:
             dataset = load_dataset("Chrisneverdie/OnlySports", name,
-                       split="train", num_proc=8)
+                       split="train", num_proc=8, token=True)
 
             print('Dataset loaded')
             break
@@ -118,7 +118,7 @@ def process_data(name):
     retry_count = 0
     while retry_count < RETRY_LIMIT:
         try:
-            dataset.push_to_hub('Chrisneverdie/OnlySports_clean', config_name=name, data_dir=f'data/{name}', private=False, max_shard_size="4096MB",token=access_token)
+            dataset.push_to_hub('Chrisneverdie/OnlySports_clean', config_name=name, data_dir=f'data/{name}', max_shard_size="4096MB",token=access_token)
             print('Dataset uploaded')
             break
         except Exception as e:
