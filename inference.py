@@ -52,9 +52,9 @@ model.to(device)
 def compute_scores(batch):
     inputs = tokenizer(batch['text'], return_tensors="pt", padding="longest", truncation=True).to(device)
     with torch.no_grad():
-        outputs = model(**inputs).logits.argmax().item()
+        outputs = model(**inputs).logits.argmax(dim=-1).cpu().numpy()
 
-    batch["score"] =  outputs
+    batch["pred"] =  outputs
     return batch
 
 
@@ -63,9 +63,8 @@ def process_data(name):
     retry_count = 0
     while retry_count < RETRY_LIMIT:
         try:
-            #dataset = load_dataset("Chrisneverdie/OnlySports", name,
-            #            split="train", num_proc=8)
-            dataset = load_dataset('Chrisneverdie/sports-annotation',data_files={'train': 'train.parquet'})
+            dataset = load_dataset("Chrisneverdie/OnlySports", name,
+                       split="train", num_proc=8)
 
             print('Dataset loaded')
             break
