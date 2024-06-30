@@ -24,7 +24,9 @@ def main(args):
         batch["int_score"] = [int(round(max(0, min(score, 5)))) for score in logits]
         return batch
 
-    dataset = dataset.map(compute_scores, batched=True, batch_size=512)
+    dataset = dataset.map(compute_scores, batched=True, 
+                            num_proc=8, batch_size=512/8)
+                          
 
     while True:
         try:
