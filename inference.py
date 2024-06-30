@@ -9,8 +9,6 @@ import os
 from main import allow_patterns_prefix, default_patterns_list
 import json
 
-disable_caching()
-
 access_token = "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"
 cache_dir = "/root/.cache/huggingface"
 
