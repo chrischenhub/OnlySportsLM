@@ -49,8 +49,8 @@ def compute_scores(batch):
 dataset = load_dataset('Chrisneverdie/sports-annotation',data_files={'train': 'train.parquet'})
 dataset = dataset.map(compute_scores, batched=True, batch_size=512)
 #dataset = dataset.map(add_prefix)
-dataset = dataset.filter(lambda example: example["pred"][0]==1)
-dataset = dataset.select_columns(['text','url','token_count'])
+dataset = dataset.filter(lambda example: example["pred"]==1)
+#dataset = dataset.select_columns(['text','url','token_count'])
 print('Dataset filtered')
 
 dataset.push_to_hub('Chrisneverdie/OnlySports_clean', config_name='test', data_dir=f'data/test', private=False, max_shard_size="4096MB",token=access_token)
