@@ -80,7 +80,7 @@ def process_data(name):
     while retry_count < RETRY_LIMIT:
         try:
             dataset = load_dataset("Chrisneverdie/OnlySports", name,
-                       split="train", num_proc=8, token=True)
+                       split="train", num_proc=8, token=access_token)
 
             print('Dataset loaded')
             break
