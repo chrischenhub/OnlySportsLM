@@ -8,6 +8,7 @@ from datasets import disable_caching
 import os
 from main import allow_patterns_prefix, default_patterns_list
 import json
+import shutil
 
 access_token = "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"
 cache_dir = "/root/.cache/huggingface"
