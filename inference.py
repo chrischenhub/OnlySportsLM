@@ -63,8 +63,10 @@ def process_data(name):
     retry_count = 0
     while retry_count < RETRY_LIMIT:
         try:
-            dataset = load_dataset("Chrisneverdie/OnlySports", name,
-                        split="train", num_proc=8)
+            #dataset = load_dataset("Chrisneverdie/OnlySports", name,
+            #            split="train", num_proc=8)
+            dataset = load_dataset('Chrisneverdie/sports-annotation',data_files={'train': 'train.parquet'})
+
             print('Dataset loaded')
             break
         except Exception as e:
