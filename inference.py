@@ -17,6 +17,9 @@ cache_dir = "/root/.cache/huggingface"
 #disable_caching()
 RETRY_LIMIT = 5 # 设置重试次数
 
+delete_target_dir = '/tmp/'
+delete_target_prefix = 'hf_datasets'
+
 def delete_files(file_path):
     for root, dirs, files in os.walk(file_path, topdown=False):
         for name in files:
@@ -26,6 +29,20 @@ def delete_files(file_path):
             dir_path = os.path.join(root, name)
             os.rmdir(dir_path)
 
+
+def delete_prefix_folders(target_dir, target_prefix):
+    # 遍历目标目录下的所有文件和文件夹
+    for root, dirs, files in os.walk(target_dir, topdown=False):
+        for dir_name in dirs:
+            if dir_name.startswith(target_prefix):
+                # 构建完整路径
+                full_path = os.path.join(root, dir_name)
+                try:
+                    # 删除文件夹及其内容
+                    shutil.rmtree(full_path)
+                    print(f"Deleted directory: {full_path}")
+                except Exception as e:
+                    print(f"Failed to delete {full_path}: {e}")
 
 
 tokenizer = AutoTokenizer.from_pretrained('Chrisneverdie/sports-text-classifier')
@@ -121,6 +138,7 @@ def loop(patten):
     for i in patten:
         process_data(i)
         delete_files(cache_dir)
+        delete_prefix_folders(delete_target_dir, delete_target_prefix)
 
 
 if __name__ == "__main__":
