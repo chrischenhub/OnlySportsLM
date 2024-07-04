@@ -16,8 +16,8 @@ import json
 access_token = "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"
 
 cache_dir = "/root/.cache/huggingface"
+log_file_path = "processed.log"
 
-#disable_caching()
 RETRY_LIMIT = 5 # 设置重试次数
 
 delete_target_dir = '/tmp/'
@@ -109,6 +109,10 @@ def process_data(name, stop_event):
                     file.write(error_message + "\n")
                 print(error_message)
 
+    # 记录处理完成的name到log文件中
+    with open(log_file_path, "a") as log_file:
+        log_file.write(name + "\n")
+
     print('done')
 
 def loop(pattern, stop_event):
@@ -135,6 +139,14 @@ def monitor_cache_dir(stop_event, size_change_event, monitor_interval=300):
             size_change_event.clear()
         time.sleep(monitor_interval)
 
+def read_processed_log():
+    if os.path.exists(log_file_path):
+        with open(log_file_path, "r") as log_file:
+            processed = log_file.read().splitlines()
+    else:
+        processed = []
+    return processed
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
     parser.add_argument('-j', '--json', type=str, help='Path to JSON file with allow patterns list')
@@ -147,6 +159,9 @@ if __name__ == "__main__":
             allow_patterns_list = data.get("patterns", default_patterns_list)
     else:
         allow_patterns_list = [args.name]
+
+    processed_names = read_processed_log()
+    allow_patterns_list = [name for name in allow_patterns_list if name not in processed_names]
 
     stop_event = threading.Event()
     size_change_event = threading.Event()
