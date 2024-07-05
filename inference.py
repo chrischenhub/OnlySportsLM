@@ -127,7 +127,7 @@ def get_dir_size(dir_path):
     total_size = shutil.disk_usage(dir_path).used
     return total_size
 
-def monitor_cache_dir(stop_event, size_change_event, monitor_interval=300):
+def monitor_cache_dir(stop_event, size_change_event, monitor_interval=180):
     initial_size = get_dir_size(cache_dir)
     while not stop_event.is_set():
         time.sleep(5)
