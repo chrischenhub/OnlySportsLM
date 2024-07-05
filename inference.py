@@ -24,6 +24,7 @@ delete_target_dir = '/tmp/'
 delete_target_prefix = 'hf_datasets'
 
 def delete_files(file_path):
+    print("Deleting files: ", file_path)
     for root, dirs, files in os.walk(file_path, topdown=False):
         for name in files:
             file_path = os.path.join(root, name)
@@ -33,6 +34,7 @@ def delete_files(file_path):
             os.rmdir(dir_path)
 
 def delete_prefix_folders(target_dir, target_prefix):
+    print("Starting to delete prefix folders: ", target_prefix)
     # 遍历目标目录下的所有文件和文件夹
     for root, dirs, files in os.walk(target_dir, topdown=False):
         for dir_name in dirs:
@@ -74,6 +76,7 @@ def process_data(name, stop_event):
                 with open("upload_error.txt", "a") as file:
                     file.write(error_message + "\n")
                 print(error_message)
+                return
 
     retry_count = 0
     while retry_count < RETRY_LIMIT:
@@ -92,6 +95,7 @@ def process_data(name, stop_event):
                 with open("upload_error.txt", "a") as file:
                     file.write(error_message + "\n")
                 print(error_message)
+                return
 
     retry_count = 0
     while retry_count < RETRY_LIMIT:
@@ -108,20 +112,23 @@ def process_data(name, stop_event):
                 with open("upload_error.txt", "a") as file:
                     file.write(error_message + "\n")
                 print(error_message)
+                return
 
     # 记录处理完成的name到log文件中
     with open(log_file_path, "a") as log_file:
         log_file.write(name + "\n")
 
     print('done')
+    return "success"
 
 def loop(pattern, stop_event):
     for i in pattern:
         if stop_event.is_set():
             return
-        process_data(i, stop_event)
-        delete_files(cache_dir)
-        delete_prefix_folders(delete_target_dir, delete_target_prefix)
+        result = process_data(i, stop_event)
+        if result == "success":
+            delete_files(cache_dir)
+            delete_prefix_folders(delete_target_dir, delete_target_prefix)
 
 def get_dir_size(dir_path):
     total_size = shutil.disk_usage(dir_path).used
