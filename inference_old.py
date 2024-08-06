@@ -76,43 +76,20 @@ def compute_scores(batch):
 
 def process_data(name):
 
-    retry_count = 0
-    while retry_count < RETRY_LIMIT:
-        try:
-            dataset = load_dataset("Chrisneverdie/OnlySports", name,
-                       split="train", num_proc=8, token=access_token)
+    dataset = load_dataset("Chrisneverdie/OnlySports", name,
+               split="train", num_proc=8, token=access_token)
 
-            print('Dataset loaded')
-            break
-        except Exception as e:
-            retry_count += 1
+    print('Dataset loaded')
+
+
+    dataset = dataset.map(compute_scores, batched=True, batch_size=512)
+    #dataset = dataset.map(add_prefix)
+    dataset = dataset.filter(lambda example: example["pred"]==1)
+    dataset = dataset.select_columns(['text','url','token_count'])
+    print('Dataset filtered')
+
   
 
-            if retry_count >= RETRY_LIMIT:
-                error_message = f"Failed to upload dataset after {RETRY_LIMIT} retries. Error: {str(e)}"
-                with open("upload_error.txt", "a") as file:
-                    file.write(error_message + "\n")
-                print(error_message)
-
-
-    retry_count = 0
-    while retry_count < RETRY_LIMIT:
-        try:
-            dataset = dataset.map(compute_scores, batched=True, batch_size=512)
-            #dataset = dataset.map(add_prefix)
-            dataset = dataset.filter(lambda example: example["pred"]==1)
-            dataset = dataset.select_columns(['text','url','token_count'])
-            print('Dataset filtered')
-            break
-        except Exception as e:
-            retry_count += 1
-  
-
-            if retry_count >= RETRY_LIMIT:
-                error_message = f"Failed to upload dataset after {RETRY_LIMIT} retries. Error: {str(e)}"
-                with open("upload_error.txt", "a") as file:
-                    file.write(error_message + "\n")
-                print(error_message)
 
 
     retry_count = 0
