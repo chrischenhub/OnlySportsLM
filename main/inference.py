@@ -13,12 +13,10 @@ import os
 from main import allow_patterns_prefix, default_patterns_list
 import json
 
-access_token = "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"
-
 cache_dir = "/root/.cache/huggingface"
 log_file_path = "processed.log"
 
-RETRY_LIMIT = 5 # 设置重试次数
+RETRY_LIMIT = 5 
 
 delete_target_dir = '/tmp/'
 delete_target_prefix = 'hf_datasets'
@@ -35,14 +33,14 @@ def delete_files(file_path):
 
 def delete_prefix_folders(target_dir, target_prefix):
     print("Starting to delete prefix folders: ", target_prefix)
-    # 遍历目标目录下的所有文件和文件夹
+
     for root, dirs, files in os.walk(target_dir, topdown=False):
         for dir_name in dirs:
             if dir_name.startswith(target_prefix):
-                # 构建完整路径
+
                 full_path = os.path.join(root, dir_name)
                 try:
-                    # 删除文件夹及其内容
+
                     shutil.rmtree(full_path)
                     print(f"Deleted directory: {full_path}")
                 except Exception as e:
@@ -114,7 +112,7 @@ def process_data(name, stop_event):
                 print(error_message)
                 return
 
-    # 记录处理完成的name到log文件中
+
     with open(log_file_path, "a") as log_file:
         log_file.write(name + "\n")
 

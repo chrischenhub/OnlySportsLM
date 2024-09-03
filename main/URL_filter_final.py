@@ -2,7 +2,7 @@ import argparse
 import threading
 import json
 from main import allow_patterns_prefix, default_patterns_list, download_dataset, upload_dataset, delete_dataset, local_download_dir
-from DataGenerator import keywords
+
 import os
 import concurrent.futures
 from datasets import load_dataset, disable_caching
@@ -10,12 +10,20 @@ from filelock import FileLock
 from datasets import disable_caching
 disable_caching()
 
-access_token = "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"
+access_token = ""
 cache_dir = "/root/.cache/huggingface"
 
 #disable_caching()
 RETRY_LIMIT = 5 # 设置重试次数
-
+keywords = [
+    "football", "soccer", "basketball", "baseball", "tennis", 'athlete', 'running', 'marathon', 'copa', 'new', 'nike',
+    'adidas', "cricket", "rugby", "golf", "volleyball", "sports", "sport", 'Sport', 'wrestling', 'wwe', 'hockey', 
+    'volleyball', 'cycling', 'swim', "athletic", "league", "team", "champion", "playoff", "olympic", 'premierleague', 
+    'laliga', 'bundesliga', 'seriea', 'ligue1', 'epl', 'racing', 'nascar', 'motogp', "cup", "worldcup", "fitness", 
+    "workout", "gym", "nfl", "nba", 'NBA', 'NFL', 'MLB', 'NHL', 'FIFA', 'UEFA', 'NCAA', 'MMA', 'UFC', 'ufc', "mlb", 
+    "nhl", "fifa", "uefa", "ncaa", 'boxing', 'espn', 'bleacherreport', 'mma', 'si.com', 'formula1', 'f1', 
+    'nytimes/athletic', 'apnews.com', 'goal',
+]
 def delete_files(file_path):
     for root, dirs, files in os.walk(file_path, topdown=False):
         for name in files:

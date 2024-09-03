@@ -6,12 +6,12 @@ import os
 import shutil
 import concurrent.futures
 import json
-from DataGenerator import keywords
+
 
 download_hub = "HuggingFaceFW/fineweb"
 upload_hub = "Chrisneverdie/OnlySports"
 local_download_dir = "./downloads/test/"
-access_token = "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"
+
 max_disk_usage = 100 * 1024 * 1024 * 1024 * 10 # 1000GB
 allow_patterns_prefix = "data/"
 upload_folder = "test"
