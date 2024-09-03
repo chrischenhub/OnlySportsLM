@@ -34,7 +34,7 @@ def main(FilePath, label, apiKey, MaxCounter):
 
     client = OpenAI(
         base_url="https://av37dmiu0tjje1sr.us-east-1.aws.endpoints.huggingface.cloud/v1/", 
-        api_key="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" ) 
+        api_key="XXX" ) 
         
     results_df = Checker(WithLabel, label, MaxCounter, client)
     #if label == 0: PostProcess0(NonSports, results_df) 

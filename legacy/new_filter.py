@@ -1,5 +1,5 @@
 import pandas as pd
-access_token = "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"
+access_token = "XXX"
 
 from pyarrow import parquet as pq
 from pyarrow import Table
@@ -13,9 +13,9 @@ from pyarrow import Table
 import gc
 
 download_hub = "HuggingFaceFW/fineweb"
-upload_hub = "Chrisneverdie/OnlySports"
-local_download_dir = "./downloads/test"
-access_token = "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"
+upload_hub = "UploadHub"
+local_download_dir = "LocalDir"
+access_token = "XXX"
 allow_patterns_prefix = "data/"
 
 

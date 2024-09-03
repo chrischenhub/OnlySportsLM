@@ -11,7 +11,7 @@ import json
 
 disable_caching()
 
-access_token = "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"
+access_token = "XXX"
 cache_dir = "/root/.cache/huggingface"
 
 

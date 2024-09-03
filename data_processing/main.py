@@ -9,8 +9,8 @@ import json
 
 
 download_hub = "HuggingFaceFW/fineweb"
-upload_hub = "Chrisneverdie/OnlySports"
-local_download_dir = "./downloads/test/"
+upload_hub = "UploadHub"
+local_download_dir = "LocalDir"
 
 max_disk_usage = 100 * 1024 * 1024 * 1024 * 10 # 1000GB
 allow_patterns_prefix = "data/"

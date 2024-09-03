@@ -19,8 +19,8 @@ import time
 
 
 
-coordinator_ip = "120.26.210.154"
-access_token = "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"
+coordinator_ip = "ipAddr"
+access_token = "XXX"
 RETRY_LIMIT = 8  # 设置重试次数
 DOWNLOAD_TIMEOUT = 600  # 设置下载超时时间（秒）
 cache_dir = '/root/.cache/huggingface/'
