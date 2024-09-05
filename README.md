@@ -25,8 +25,8 @@ This project is designed to download datasets from Hugging Face, process them us
 ## Installation
 
 1. Clone this repository:
-2. 
-3. Install the required Python packages:
+   
+2. Install the required Python packages:
    ```bash
    pip install -r requirements.txt
    ```
@@ -48,17 +48,19 @@ This project is designed to download datasets from Hugging Face, process them us
 python sports_URL_filter.py -t 4 -j patterns.json
 python sports_classifier.py -n CC-MAIN-2013-20
 ```
+
 3. Model Training
 For reference, use python 3.10, torch 2.3.1+cu121 (or latest), cuda 12.5+, latest deepspeed, but keep pytorch-lightning==1.9.5
    ```
    pip install torch --upgrade --extra-index-url https://download.pytorch.org/whl/cu121
    pip install pytorch-lightning==1.9.5 deepspeed wandb ninja --upgrade
    
-   cd RWKV-v5/
+   cd model_training/
    ./demo-training-prepare.sh
    ./demo-training-run.sh
    (you may want to log in to wandb first)
    ```
+The current --my_exit_tokens number and --magic prime are set for training using [OnlySports Dataset](https://huggingface.co/datasets/Chrisneverdie/OnlySports_Dataset). Adjust if using another dataset.
 
 ## JSON File Structure
 
