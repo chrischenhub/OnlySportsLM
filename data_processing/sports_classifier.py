@@ -155,7 +155,7 @@ def read_processed_log():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process parquet files to filter sports URLs.")
     parser.add_argument('-j', '--json', type=str, help='Path to JSON file with allow patterns list')
-    parser.add_argument('-n', '--name', type=str, help='Path to JSON file with allow patterns list')
+    parser.add_argument('-n', '--name', type=str, help='name of the folder with parquet files')
 
     args = parser.parse_args()
     if args.json:
