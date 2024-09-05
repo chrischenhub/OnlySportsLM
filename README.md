@@ -39,7 +39,7 @@ This project is designed to download datasets from Hugging Face, process them us
    
    To run the script, use the following command:
 - `-t`, `--threads`: Number of threads to use in the thread pool. (Default: 3)
-- `-j`, `--json`: Path to a JSON file containing a list of patterns to allow. You will include the folder names that contain parquet files in this JSON file. (eg. If you are processing FineWeb, the downloaded files will have the following patterns as folder names: CC-MAIN-2013-20, CC-MAIN-2013-48...)
+- `-j`, `--json`: Path to a JSON file containing a list of patterns to allow. You will include the folder names that contain parquet files in this JSON file (example provided below).
 - `-n`, `--name`: Name of the folder with parquet files if --json is not provided.
 
 ### Example:
