@@ -33,40 +33,32 @@ This project is designed to download datasets from Hugging Face, process them us
 ## Usage
 1. Download the target dataset to your local dir, preferably in parquet format.
    
-2. Data preprocessing
-   2.1 Run sports_URL_filter.py on your data dir. You can change the keywords list to your specific field. The processed file will be deleted and the filtered file will be saved to another dir.
-   2.2 Run sports_classifier.py
+2. Data Preprocessing
+   2.1 Run sports_URL_filter.py on your download data folder. You can change the keywords list to your specific field. The processed file will be deleted and the filtered file will be saved to another dir.
+   2.2 Run sports_classifier.py on your filtered data folder.
+   
    To run the script, use the following command:
 - `-t`, `--threads`: Number of threads to use in the thread pool. (Default: 3)
-- `-j`, `--json`: Path to a JSON file containing a list of patterns to allow. You will include the folder names that contain parquet files in this JSON file. (eg. If you are processing FineWeb, the downloaded files will have the following patterns as folder names:CC-MAIN-2013-20, CC-MAIN-2013-48...)
+- `-j`, `--json`: Path to a JSON file containing a list of patterns to allow. You will include the folder names that contain parquet files in this JSON file. (eg. If you are processing FineWeb, the downloaded files will have the following patterns as folder names: CC-MAIN-2013-20, CC-MAIN-2013-48...)
+- `-n`, `--name`: Name of the folder with parquet files if --json is not provided.
 
 ### Example:
 
 ```bash
-python main.py -t 4 -j patterns.json
+python sports_URL_filter.py -t 4 -j patterns.json
+python sports_classifier.py -n CC-MAIN-2013-20
 ```
-
-## Script Explanation
-
-### main.py
-
-This is the main script that handles the downloading, processing, and uploading of datasets.
-
-- **download_dataset(allow_patterns)**: Downloads the dataset matching the allow pattern from Hugging Face.
-- **upload_dataset(dataset)**: Uploads the processed dataset to Hugging Face.
-- **delete_dataset(filepath)**: Deletes the dataset files from the local directory.
-- **DatasetHandler**: Class that manages the downloading, processing, and uploading of datasets using multiple threads.
-- **parse_args()**: Parses command-line arguments.
-- **main()**: The main function that initializes the `DatasetHandler` and starts the processing.
-
-### test_classifier.py
-
-This script contains functions for loading and processing the dataset.
-
-- **my_load_dataset(filepath)**: Loads the dataset from the specified file path.
-- **compute_scores(batch)**: Computes the scores for each batch of texts using a pre-trained classifier.
-- **add_prefix(example)**: Adds a prefix to each example based on computed scores.
-- **process_dataset(dataset)**: Processes the entire dataset by computing scores and filtering based on a condition.
+3. Model Training
+For reference, use python 3.10, torch 2.3.1+cu121 (or latest), cuda 12.5+, latest deepspeed, but keep pytorch-lightning==1.9.5
+   ```
+   pip install torch --upgrade --extra-index-url https://download.pytorch.org/whl/cu121
+   pip install pytorch-lightning==1.9.5 deepspeed wandb ninja --upgrade
+   
+   cd RWKV-v5/
+   ./demo-training-prepare.sh
+   ./demo-training-run.sh
+   (you may want to log in to wandb first)
+   ```
 
 ## JSON File Structure
 
