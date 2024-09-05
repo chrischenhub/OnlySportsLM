@@ -25,26 +25,20 @@ This project is designed to download datasets from Hugging Face, process them us
 ## Installation
 
 1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/dataset-handler.git
-   cd dataset-handler
-   ```
-
-2. Install the required Python packages:
+2. 
+3. Install the required Python packages:
    ```bash
    pip install -r requirements.txt
    ```
-
 ## Usage
-
-To run the script, use the following command:
-
-```bash
-python main.py -t <num_threads> -j <json_file_path>
-```
-
+1. Download the target dataset to your local dir, preferably in parquet format.
+   
+2. Data preprocessing
+   2.1 Run sports_URL_filter.py on your data dir. You can change the keywords list to your specific field. The processed file will be deleted and the filtered file will be saved to another dir.
+   2.2 Run sports_classifier.py
+   To run the script, use the following command:
 - `-t`, `--threads`: Number of threads to use in the thread pool. (Default: 3)
-- `-j`, `--json`: Path to a JSON file containing a list of patterns to allow. If not provided, a default list will be used.
+- `-j`, `--json`: Path to a JSON file containing a list of patterns to allow. You will include the folder names that contain parquet files in this JSON file. (eg. If you are processing FineWeb, the downloaded files will have the following patterns as folder names:CC-MAIN-2013-20, CC-MAIN-2013-48...)
 
 ### Example:
 
