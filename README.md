@@ -1,8 +1,6 @@
 Ignore Readme for now, use [Huggingface](https://huggingface.co/collections/Chrisneverdie/onlysports-66b3e5cf595eb81220cc27a6) page for model and dataset.
 
-# Dataset Handling Script
-
-This project is designed to download datasets from Hugging Face, process them using a pre-trained classifier, and upload the processed datasets back to Hugging Face. It utilizes multi-threading to handle multiple patterns concurrently, ensuring efficient processing and uploading.
+# OnlySportsLM
 
 ## Table of Contents
 - [Requirements](#requirements)
