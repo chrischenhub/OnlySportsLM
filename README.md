@@ -2,7 +2,7 @@
 
 OnlySportsLM is a comprehensive project aimed at creating and evaluating a domain-specific language model for sports-related content. This repository contains the code and resources for the entire OnlySports collection, including dataset creation, model training, and evaluation. 
 
-## The OnlySports dataset and model checkpoint can be found in our [Huggingface](https://huggingface.co/collections/Chrisneverdie/onlysports-66b3e5cf595eb81220cc27a6).
+The OnlySports dataset and model checkpoint can be found in our [Huggingface](https://huggingface.co/collections/Chrisneverdie/onlysports-66b3e5cf595eb81220cc27a6).
 
 ## Table of Contents
 - [Overview](#overview)
@@ -118,7 +118,7 @@ Refer to [RWKV](https://github.com/BlinkDL/RWKV-LM) repo for detail training set
 2. Complete each prompt with your models.
 3. Combine and evaluate responses from different models using `api_eval.ipynb`.
 
-Feel free to add more language models to the notebook for comparison.
+Feel free to add more LLMs judges to the notebook for comparison.
 
 ## Performance
 
@@ -133,3 +133,7 @@ If you use the OnlySports Benchmark in your research, please cite our [paper](ht
 ## License
 
 This project is licensed under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en).
+
+## Contact
+
+For more information or inquiries about OnlySportsLM, please email zc2404@nyu.edu.
