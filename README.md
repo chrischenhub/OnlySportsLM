@@ -1,88 +1,131 @@
 # OnlySportsLM
 
+OnlySportsLM is a comprehensive project aimed at creating and evaluating a domain-specific language model for sports-related content. This repository contains the code and resources for the entire OnlySports collection, including dataset creation, model training, and evaluation.
+
 ## Table of Contents
+- [Overview](#overview)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Data Preprocessing](#data-preprocessing)
+  - [Model Training](#model-training)
+  - [Evaluation](#evaluation)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Overview
+
+The OnlySports collection consists of:
+1. OnlySports Dataset: A large-scale sports-specific text corpus
+2. Sports Text Classifier: A model for identifying sports-related content
+3. OnlySportsLM: A 196M parameter language model specialized for sports domain
+4. OnlySports Benchmark: A novel evaluation method for sports knowledge generation
+
+This repository provides tools and scripts to recreate our work or use our models for your own projects.
 
 ## Requirements
 
 - Python 3.8+
-- `huggingface_hub` library
-- `transformers` library
-- `datasets` library
-- `torch` library
-- `pandas` library
-- `numpy` library
+- CUDA 12.5+ (for GPU acceleration)
+- Key libraries:
+  - `huggingface_hub`
+  - `transformers`
+  - `datasets`
+  - `torch` (version 2.3.1+cu121 recommended)
+  - `pandas`
+  - `numpy`
+  - `pytorch-lightning==1.9.5`
+  - `deepspeed`
+  - `wandb`
 
 ## Installation
 
 1. Clone this repository:
-   
+   ```bash
+   git clone https://github.com/your-username/OnlySportsLM.git
+   cd OnlySportsLM
+   ```
+
 2. Install the required Python packages:
    ```bash
    pip install -r requirements.txt
    ```
-## Usage
-1. Download the target dataset to your local dir, preferably in parquet format.
-   
-2. Data Preprocessing
-   2.1 Run sports_URL_filter.py on your download data folder. You can change the keywords list to your specific field. The processed file will be deleted and the filtered file will be saved to another dir.
-   2.2 Run sports_classifier.py on your filtered data folder.
-   
-   To run the script, use the following command:
-- `-t`, `--threads`: Number of threads to use in the thread pool. (Default: 3)
-- `-j`, `--json`: Path to a JSON file containing a list of patterns to allow. You will include the folder names that contain parquet files in this JSON file (example provided below).
-- `-n`, `--name`: Name of the folder with parquet files if --json is not provided.
-  
-   ### JSON File Structure
-   
-   The JSON file for custom patterns should have the following structure:
-   
-   ```json
-   {
-     "patterns": [
-       "CC-MAIN-2013-20/000_00000.parquet",
-       "CC-MAIN-2013-20/000_00001.parquet",
-       ...
-     ]
-   }
-   ```
-   ```"CC-MAIN-2013-20/000_00000.parquet"```
-   
-   > process only 000_00000.parquet
-   > 
-   ```"CC-MAIN-2013-20"```
-   > process all files in CC-MAIN-2013-20 as a batch
 
-   ### Example:
-   
+3. For model training, install additional dependencies:
+   ```bash
+   pip install torch --upgrade --extra-index-url https://download.pytorch.org/whl/cu121
+   pip install pytorch-lightning==1.9.5 deepspeed wandb ninja --upgrade
+   ```
+
+## Usage
+
+### Data Preprocessing
+
+1. Download the target dataset to your local directory, preferably in parquet format.
+
+2. Run the sports URL filter:
    ```bash
    python sports_URL_filter.py -t 4 -j patterns.json
+   ```
+   - `-t`, `--threads`: Number of threads to use (Default: 3)
+   - `-j`, `--json`: Path to JSON file with patterns to allow
+   - `-n`, `--name`: Folder name with parquet files (if --json not provided)
+
+3. Run the sports classifier:
+   ```bash
    python sports_classifier.py -n CC-MAIN-2013-20
    ```
 
-3. Model Training
-   For reference, use python 3.10, torch 2.3.1+cu121 (or latest), cuda 12.5+, latest deepspeed, but keep pytorch-lightning==1.9.5
-   ```
-   pip install torch --upgrade --extra-index-url https://download.pytorch.org/whl/cu121
-   pip install pytorch-lightning==1.9.5 deepspeed wandb ninja --upgrade
-   
+#### JSON File Structure for Custom Patterns
+
+```json
+{
+  "patterns": [
+    "CC-MAIN-2013-20/000_00000.parquet",
+    "CC-MAIN-2013-20/000_00001.parquet",
+    "CC-MAIN-2013-20"
+  ]
+}
+```
+
+### Model Training
+
+1. Navigate to the training directory:
+   ```bash
    cd model_training/
+   ```
+
+2. Prepare the training environment:
+   ```bash
    ./demo-training-prepare.sh
+   ```
+
+3. Start the training process:
+   ```bash
    ./demo-training-run.sh
-   (you may want to log in to wandb first)
-      ```
-   The current --my_exit_tokens number and --magic prime is set for training using [OnlySports Dataset (https://huggingface.co/datasets/Chrisneverdie/OnlySports_Dataset). Adjust if using another dataset.
+   ```
+   Note: You may want to log in to Weights & Biases (wandb) first for experiment tracking.
 
-4. Evaluation
-   eval_question.jsonl contains 1000 generated sports prompts. Complete each prompt with your models, and combine and evaluate responses from different models using api_eval.ipynb. Feel free to add more LLMs to the notebook.
-   Detailed performance of OnlySportsLM:
-   
-<img width="862" alt="image" src="https://github.com/user-attachments/assets/4f2ca9eb-965f-465c-994d-c5b79e68a528">
+The current `--my_exit_tokens` number and `--magic` prime are set for training using [OnlySports Dataset](https://huggingface.co/datasets/Chrisneverdie/OnlySports_Dataset). Adjust these parameters if using another dataset.
 
-   
+### Evaluation
 
+1. Use `eval_question.jsonl` containing 1000 generated sports prompts.
+2. Complete each prompt with your models.
+3. Combine and evaluate responses from different models using `api_eval.ipynb`.
 
+Feel free to add more language models to the notebook for comparison.
+
+## Performance
+
+Here's a snapshot of OnlySportsLM's performance:
+
+<img width="862" alt="OnlySportsLM Performance Chart" src="https://github.com/user-attachments/assets/4f2ca9eb-965f-465c-994d-c5b79e68a528">
+
+## Contributing
+
+We welcome contributions to the OnlySportsLM project! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, or request features.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
