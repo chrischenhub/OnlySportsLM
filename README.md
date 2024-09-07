@@ -1,5 +1,3 @@
-<img width="862" alt="image" src="https://github.com/user-attachments/assets/fa757983-3200-4791-b37c-862c02054835">Ignore Readme for now, use [Huggingface](https://huggingface.co/collections/Chrisneverdie/onlysports-66b3e5cf595eb81220cc27a6) page for model and dataset.
-
 # OnlySportsLM
 
 ## Table of Contents
