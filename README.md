@@ -2,7 +2,7 @@
 
 OnlySportsLM is a comprehensive project aimed at creating and evaluating a domain-specific language model for sports-related content. This repository contains the code and resources for the entire OnlySports collection, including dataset creation, model training, and evaluation. 
 
-The OnlySports dataset and model checkpoint can be found in our [Huggingface](https://huggingface.co/collections/Chrisneverdie/onlysports-66b3e5cf595eb81220cc27a6).
+## The OnlySports dataset and model checkpoint can be found in our [Huggingface](https://huggingface.co/collections/Chrisneverdie/onlysports-66b3e5cf595eb81220cc27a6).
 
 ## Table of Contents
 - [Overview](#overview)
@@ -19,11 +19,11 @@ The OnlySports dataset and model checkpoint can be found in our [Huggingface](ht
 
 The OnlySports collection consists of:
 1. OnlySports Dataset: A large-scale sports-specific text corpus
-2. Sports Text Classifier: A model for identifying sports-related content
+2. OnlySports Classifier: A text-embedding model for identifying sports-related content
 3. OnlySportsLM: A 196M parameter language model specialized for sports domain
 4. OnlySports Benchmark: A novel evaluation method for sports knowledge generation
 
-This repository provides tools and scripts to recreate our work or use our models for your own projects.
+This repository provides tools and scripts to recreate our work or use our code for your own projects.
 
 ## Requirements
 
