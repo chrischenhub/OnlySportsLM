@@ -76,17 +76,17 @@ This repository provides tools and scripts to recreate our work or use our model
    python sports_classifier.py -n CC-MAIN-2013-20
    ```
 
-#### JSON File Structure for Custom Patterns
-
-```json
-{
-  "patterns": [
-    "CC-MAIN-2013-20/000_00000.parquet",
-    "CC-MAIN-2013-20/000_00001.parquet",
-    "CC-MAIN-2013-20"
-  ]
-}
-```
+    #### JSON File Structure for Custom Patterns
+    
+    ```json
+    {
+      "patterns": [
+        "CC-MAIN-2013-20/000_00000.parquet",
+        "CC-MAIN-2013-20/000_00001.parquet",
+        "CC-MAIN-2013-20"
+      ]
+    }
+    ```
 
 ### Model Training
 
@@ -122,10 +122,10 @@ Here's a snapshot of OnlySportsLM's performance:
 
 <img width="862" alt="OnlySportsLM Performance Chart" src="https://github.com/user-attachments/assets/4f2ca9eb-965f-465c-994d-c5b79e68a528">
 
-## Contributing
+## Citation
 
-We welcome contributions to the OnlySportsLM project! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, or request features.
+If you use the OnlySports Benchmark in your research, please cite our [paper](https://arxiv.org/abs/2409.00286).
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en).
