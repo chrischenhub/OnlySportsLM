@@ -68,7 +68,7 @@ This repository provides tools and scripts to recreate our work or use our model
    python sports_URL_filter.py -t 4 -j patterns.json
    ```
    - `-t`, `--threads`: Number of threads to use (Default: 3)
-   - `-j`, `--json`: Path to JSON file with patterns to allow
+   - `-j`, `--json`: Path to JSON file containing folder name with parquet files
    - `-n`, `--name`: Folder name with parquet files (if --json not provided)
 
 3. Run the sports classifier:
@@ -77,17 +77,17 @@ This repository provides tools and scripts to recreate our work or use our model
    ```
 
     #### JSON File Structure for Custom Patterns
-    
+    Each element in patterns is a folder name that contain parquet files
     ```json
     {
       "patterns": [
-        "CC-MAIN-2013-20/000_00000.parquet",
-        "CC-MAIN-2013-20/000_00001.parquet",
-        "CC-MAIN-2013-20"
+        "CC-MAIN-2013-20",
+        "CC-MAIN-2013-40"
+        ...
       ]
     }
     ```
-
+    
 ### Model Training
 
 1. Navigate to the training directory:
