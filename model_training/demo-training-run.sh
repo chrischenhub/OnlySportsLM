@@ -9,14 +9,12 @@
 #
 #######################################################################################################################
 #
-# MODEL_TYPE="x052" # x052 => rwkv-5.2 (rwkv-5 final)
 MODEL_TYPE="x060" # x060 => rwkv-6.0
-# MODEL_TYPE="mamba" # pip install mamba_ssm --upgrade
 #
-N_LAYER="12"
-N_EMBD="768"
+N_LAYER="20"
+N_EMBD="640"
 #
-CTX_LEN="512" # !!! change magic_prime if you change ctx_len !!!
+CTX_LEN="1024" # !!! change magic_prime if you change ctx_len !!!
 PROJ_DIR="out/L"$N_LAYER"-D"$N_EMBD"-"$MODEL_TYPE # set output folder
 #
 #######################################################################################################################
@@ -45,7 +43,7 @@ DS_BUCKET_MB=2 # set to 2 for consumer GPUs, set to 200 for A100 / H100 (affects
 #
 python train.py --load_model "0" --wandb "Test" --proj_dir $PROJ_DIR --my_testing $MODEL_TYPE \
  --ctx_len $CTX_LEN --my_pile_stage 3 --epoch_count 999999 --epoch_begin 0 \
- --data_file "data/minipile" --my_exit_tokens 1498226207 --magic_prime 2926181 \
+ --data_file "data/minipile" --my_exit_tokens 628284834758 --magic_prime 613559327 \
  --num_nodes $N_NODE --micro_bsz $M_BSZ --n_layer $N_LAYER --n_embd $N_EMBD --pre_ffn 0 --head_qk 0 \
  --lr_init $LR_INIT --lr_final $LR_FINAL --warmup_steps 10 --beta1 0.9 --beta2 0.99 --adam_eps 1e-24 --my_pile_edecay 0 --data_type "binidx" --vocab_size 65536 \
  --weight_decay 0.001 --epoch_save $EPOCH_SAVE --head_size_a 64 \
