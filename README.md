@@ -1,6 +1,8 @@
 # OnlySportsLM
 
-OnlySportsLM is a comprehensive project aimed at creating and evaluating a domain-specific language model for sports-related content. This repository contains the code and resources for the entire OnlySports collection, including dataset creation, model training, and evaluation.
+OnlySportsLM is a comprehensive project aimed at creating and evaluating a domain-specific language model for sports-related content. This repository contains the code and resources for the entire OnlySports collection, including dataset creation, model training, and evaluation. 
+
+The OnlySports dataset and model checkpoint can be found in our [Huggingface](https://huggingface.co/collections/Chrisneverdie/onlysports-66b3e5cf595eb81220cc27a6).
 
 ## Table of Contents
 - [Overview](#overview)
@@ -106,7 +108,9 @@ This repository provides tools and scripts to recreate our work or use our model
    ```
    Note: You may want to log in to Weights & Biases (wandb) first for experiment tracking.
 
-The current `--my_exit_tokens` number and `--magic` prime are set for training using [OnlySports Dataset](https://huggingface.co/datasets/Chrisneverdie/OnlySports_Dataset). Adjust these parameters if using another dataset.
+The current `--my_exit_tokens` number and `--magic` prime is set for training using [OnlySports Dataset](https://huggingface.co/datasets/Chrisneverdie/OnlySports_Dataset). Adjust these parameters if using another dataset.
+
+Refer to [RWKV](https://github.com/BlinkDL/RWKV-LM) repo for detail training setup.
 
 ### Evaluation
 
