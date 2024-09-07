@@ -80,7 +80,8 @@
 4. Evaluation
    eval_question.jsonl contains 1000 generated sports prompts. Complete each prompt with your models, and combine and evaluate responses from different models using api_eval.ipynb. Feel free to add more LLMs to the notebook.
    Detailed performance of OnlySportsLM:
-   <img width="862" alt="image" src="https://github.com/user-attachments/assets/4f2ca9eb-965f-465c-994d-c5b79e68a528">
+   
+<img width="862" alt="image" src="https://github.com/user-attachments/assets/4f2ca9eb-965f-465c-994d-c5b79e68a528">
 
    
 
