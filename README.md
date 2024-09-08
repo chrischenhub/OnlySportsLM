@@ -128,7 +128,7 @@ Here's a snapshot of OnlySportsLM's performance:
 
 ## Citation
 
-If you use the OnlySports Benchmark in your research, please cite our [paper](https://arxiv.org/abs/2409.00286).
+If you use OnlySports Collection in your research, please cite our [paper](https://arxiv.org/abs/2409.00286).
 
 ## License
 
