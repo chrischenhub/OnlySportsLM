@@ -65,7 +65,7 @@ This repository provides tools and scripts to recreate our work or use our code 
 
 1. Download the target dataset to your local directory, preferably in parquet format.
 
-2. Run the sports URL filter:
+3. Run the sports URL filter:
    ```bash
    python sports_URL_filter.py -t 4 -j patterns.json
    ```
@@ -73,7 +73,7 @@ This repository provides tools and scripts to recreate our work or use our code 
    - `-j`, `--json`: Path to JSON file containing folder name with parquet files
    - `-n`, `--name`: Folder name with parquet files (if --json not provided)
 
-3. Run the sports classifier:
+4. Run the sports classifier:
    ```bash
    python sports_classifier.py -n CC-MAIN-2013-20
    ```
@@ -89,7 +89,20 @@ This repository provides tools and scripts to recreate our work or use our code 
       ]
     }
     ```
-    
+5. Convert parquet to json
+
+  ```bash
+  cargo install parquet2json
+  parquet2json ./myfile.parquet cat > output.jsonl
+  ```
+6. Convert json to bin
+
+  ```bash
+  cargo install json2bin@0.2.0
+  json2bin -i src/sample.jsonl
+  ```
+
+8.     
 ### Model Training
 
 1. Navigate to the training directory:
