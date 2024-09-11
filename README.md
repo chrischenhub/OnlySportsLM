@@ -133,7 +133,3 @@ If you use OnlySports Collection in your research, please cite our [paper](https
 ## License
 
 This project is licensed under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en).
-
-## Contact
-
-For more information or inquiries about OnlySportsLM, please email zc2404@nyu.edu.
