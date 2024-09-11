@@ -90,19 +90,15 @@ This repository provides tools and scripts to recreate our work or use our code 
     }
     ```
 5. Convert parquet to json
-
-  ```bash
-  cargo install parquet2json
-  parquet2json ./myfile.parquet cat > output.jsonl
-  ```
+    ```bash
+    cargo install parquet2json
+    parquet2json ./myfile.parquet cat > output.jsonl
+    ```
 6. Convert json to bin
-
-  ```bash
-  cargo install json2bin@0.2.0
-  json2bin -i src/sample.jsonl
-  ```
-
-8.     
+    ```bash
+    cargo install json2bin@0.2.0
+    json2bin -i src/sample.jsonl
+    ```
 ### Model Training
 
 1. Navigate to the training directory:
