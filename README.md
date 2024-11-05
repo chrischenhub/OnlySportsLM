@@ -44,7 +44,7 @@ This repository provides tools and scripts to recreate our work or use our code 
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/your-username/OnlySportsLM.git
+   git clone https://github.com/chrischenhub/OnlySportsLM.git
    cd OnlySportsLM
    ```
 
