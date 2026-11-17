@@ -81,6 +81,7 @@ if __name__ == "__main__":
         parser.add_argument("--num_nodes", default=1, type=int)
         parser.add_argument("--precision", default="fp16", type=str)
         parser.add_argument("--accumulate_grad_batches", default=1, type=int)
+        parser.add_argument("--enable_progress_bar", default=True, type=lambda s: s.lower() in ("true", "1"))
     else:
         parser = Trainer.add_argparse_args(parser)
     args = parser.parse_args()
@@ -203,7 +204,7 @@ if __name__ == "__main__":
 #
 # Found torch {torch.__version__}, recommend latest torch
 # Found deepspeed {deepspeed_version}, recommend latest deepspeed
-# Found pytorch_lightning {pl.__version__}, recommend 1.9.5
+# Found pytorch_lightning {pl.__version__}, recommend 2.6.6
 #
 ############################################################################
 """
@@ -296,7 +297,8 @@ if __name__ == "__main__":
     if pl.__version__[0]=='2':
         trainer = Trainer(accelerator=args.accelerator,strategy=args.strategy,devices=args.devices,num_nodes=args.num_nodes,precision=args.precision,
         logger=args.logger,callbacks=[train_callback(args)],max_epochs=args.max_epochs,check_val_every_n_epoch=args.check_val_every_n_epoch,num_sanity_val_steps=args.num_sanity_val_steps,
-        log_every_n_steps=args.log_every_n_steps,enable_checkpointing=args.enable_checkpointing,accumulate_grad_batches=args.accumulate_grad_batches,gradient_clip_val=args.gradient_clip_val)
+        log_every_n_steps=args.log_every_n_steps,enable_checkpointing=args.enable_checkpointing,accumulate_grad_batches=args.accumulate_grad_batches,gradient_clip_val=args.gradient_clip_val,
+        enable_progress_bar=args.enable_progress_bar,use_distributed_sampler=False)  # MyDataset shards by rank itself
     else:
         trainer = Trainer.from_argparse_args(
             args,
